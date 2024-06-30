@@ -4,6 +4,8 @@ import 'package:fleymovieapp/data_sources/kkphim/api_services_single_movie.dart'
 import 'package:fleymovieapp/models/kkphim/single_movie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fleymovieapp/view_models/home_screen_view_model.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -13,21 +15,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<String> imageBannerUrls = [
-    'https://cinema.momocdn.net/img/51864595072123353-wEXCCYzbslBJoym4aeiIV2V7cGz.jpg',
-    'https://static2.vieon.vn/vieplay-image/poster_v4/2022/08/25/0snqk97o_660x946-tiemcapheluat.jpg',
-    'https://images2.thanhnien.vn/528068263637045248/2024/2/20/special-poster-2-mai-17084211313531000860296.jpg',
-  ];
-
   // Variable
   late SingleMovie? _singleMovie;
+  String nameSource = 'KK Phim';
 
   @override
   void initState() {
     super.initState();
     _fetchSingleMovie(1);
-  } //Fetch Data
+  }
 
+  // //Fetch Data
   Future<SingleMovie?> _fetchSingleMovie(int page) async {
     ApiServicesSingleMovie apiService = ApiServicesSingleMovie(page);
     try {
@@ -49,34 +47,83 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _showSourceList(BuildContext context) {
+    final viewModel = Provider.of<HomeScreenViewModel>(context, listen: false);
+    List<String> sourceMovie = viewModel.getSourceMovie();
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          color: Colors.black87,
+          height: 400,
+          child: ListView.builder(
+            itemCount: sourceMovie.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                title: Text(
+                  sourceMovie[index],
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+                onTap: () {
+                  setState(() {
+                    if (index == 0) {
+                      nameSource = viewModel.sourceMovie[index];
+                      // load data phim ở đây
+                    } else {
+                      final snackBar = SnackBar(
+                        content: Text(
+                            'Nguồn phim đang được cập nhập !\nChúc bạn xem phim vui vẻ'),
+                        duration: Duration(seconds: 3),
+                        action: SnackBarAction(
+                          label: 'OK',
+                          onPressed: () {},
+                        ),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
+                  });
+                  Navigator.of(context).pop();
+                },
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            children: [
-              Stack(
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
                 children: [
-                  buildBannerMovie(),
-                  buildLogo(),
+                  Stack(
+                    children: [
+                      buildBannerMovie(),
+                      buildLogo(),
+                    ],
+                  ),
+                  buildListMovie(_singleMovie!),
+                  buildListMovie(_singleMovie!),
                 ],
               ),
-              const SizedBox(
-                // cách lề 10
-                height: 10,
-              ),
-              buildListMovie(_singleMovie!),
-            ],
-          ),
+            ),
+            buildButtonSourceMovie(nameSource),
+          ],
         ),
       ),
     );
   }
 
-  // Header - Logo
+// Header - Logo
   Widget buildLogo() {
     return Padding(
       padding: const EdgeInsets.only(left: 10, right: 10),
@@ -118,22 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             children: [
               ElevatedButton(
-                onPressed: () async {
-                  print('Đã bấm');
-                  ApiServicesSingleMovie apiService = ApiServicesSingleMovie(2);
-                  try {
-                    SingleMovie singleMovie = await apiService.fetchMovie();
-                    if (singleMovie.data != null && singleMovie.data!.items != null) {
-                      singleMovie.data!.items!.forEach((item) {
-                        print(singleMovie.data?.appDomainCdnImage);
-                      });
-                    }
-                  } catch (e) {
-                    print('Error: $e');
-                  }
-                  print('Đã bấm Xong');
-                  print('${_singleMovie!.data!.titlePage!}');
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(60, 38),
                   foregroundColor: Colors.white,
@@ -159,32 +191,41 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Banner Movie
+// Banner Movie
   Widget buildBannerMovie() {
-    return SizedBox(
-      height: 550,
-      child: PageView.builder(
-        itemCount: imageBannerUrls.length, // Số lượng hình ảnh trong danh sách
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            width: MediaQuery.of(context).size.width,
-            child: Stack(
-              children: [
-                Image.network(
-                  imageBannerUrls[index],
-                  height: 550,
-                  width: double.infinity,
-                  fit: BoxFit.fill,
-                ),
-              ],
+    return Consumer<HomeScreenViewModel>(
+      builder: (context, viewModel, child) {
+        List<String> imageBannerUrls = viewModel.getImageBannerUrls();
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: SizedBox(
+            height: 550,
+            child: PageView.builder(
+              itemCount: imageBannerUrls.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Stack(
+                    children: [
+                      Image.network(
+                        imageBannerUrls[index],
+                        height: 550,
+                        width: double.infinity,
+                        fit: BoxFit.fill,
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
-  // List Movie
+// List Movie
 
   Widget buildListMovie(SingleMovie singleMovie) {
     return Container(
@@ -215,9 +256,10 @@ class _HomeScreenState extends State<HomeScreen> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: singleMovie.data?.items?.map((item) {
-                final url = item.posterUrl;
-                final appDomainCdnImage = singleMovie.data!.appDomainCdnImage;
-                final posterUrl = appDomainCdnImage! + '/' + url!;
+                    final url = item.posterUrl;
+                    final appDomainCdnImage =
+                        singleMovie.data!.appDomainCdnImage;
+                    final posterUrl = appDomainCdnImage! + '/' + url!;
                     return Container(
                       padding: const EdgeInsets.only(right: 8),
                       child: Column(
@@ -255,5 +297,37 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+//   Buid Button Source Movie
+  Widget buildButtonSourceMovie(String nameSource) {
+    return Consumer<HomeScreenViewModel>(builder: (context, viewModel, child) {
+      return Positioned(
+        right: 16,
+        bottom: 16,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          onPressed: () {
+            _showSourceList(context);
+          },
+          child: Row(
+            children: [
+              Icon(Icons.shuffle),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                nameSource,
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
   }
 }
