@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import '../data_sources/kkphim/api_services_series_movie.dart';
-import '../data_sources/kkphim/api_services_single_movie.dart';
+import '../data_sources/kkphim/api_services_movie.dart';
 import '../models/kkphim/movie.dart';
 
 class HomeScreenViewModel extends ChangeNotifier {
@@ -16,37 +15,42 @@ class HomeScreenViewModel extends ChangeNotifier {
 
   Movie? _singleMovie;
   Movie? _seriesMovie;
+  Movie? _cartoonMovie;
+  Movie? _tiviShows;
   bool _isLoading = false;
 
   Movie? get singleMovie => _singleMovie;
   Movie? get seriesMovie => _seriesMovie;
+  Movie? get cartoonMovie => _cartoonMovie;
+  Movie? get tiviShows => _tiviShows;
   bool get isLoading => _isLoading;
 
   Future<void> fetchMovies() async {
-    _isLoading = true;
-    notifyListeners();
-    await Future.wait([fetchSingleMovie(1), fetchSeriesMovie(1)]);
-    _isLoading = false;
-    notifyListeners();
-  }
-
-  Future<void> fetchSingleMovie(int page) async {
-    ApiServicesSingleMovie apiService = ApiServicesSingleMovie(page);
     try {
-      Movie movie = await apiService.fetchMovie();
-      _singleMovie = movie.data?.items != null ? movie : null;
+      _isLoading = true;
+      notifyListeners();
+      _singleMovie = await _fetchMovie('phim-le', 1);
+      _seriesMovie = await _fetchMovie('phim-bo', 1);
+      _cartoonMovie = await _fetchMovie('hoat-hinh', 1);
+      _tiviShows = await _fetchMovie('tv-shows', 1);
     } catch (e) {
       _singleMovie = null;
+      _seriesMovie = null;
+      _cartoonMovie = null;
+      _tiviShows = null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
-  Future<void> fetchSeriesMovie(int page) async {
-    ApiServicesSeriesMovie apiService = ApiServicesSeriesMovie(page);
+  Future<Movie?> _fetchMovie(String movieType, int page) async {
+    ApiServicesMovie apiService = ApiServicesMovie(page, movieType);
     try {
       Movie movie = await apiService.fetchMovie();
-      _seriesMovie = movie.data?.items != null ? movie : null;
+      return movie.data?.items != null ? movie : null;
     } catch (e) {
-      _seriesMovie = null;
+      return null;
     }
   }
 }

@@ -1,5 +1,5 @@
 import 'package:fleymovieapp/view_models/home_screen_view_model.dart';
-import 'package:fleymovieapp/views/splash_screen.dart';
+import 'package:fleymovieapp/views/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
