@@ -2,7 +2,6 @@ import 'package:fleymovieapp/data_sources/kkphim/api_services_single_movie.dart'
 import 'package:flutter/material.dart';
 import 'package:fleymovieapp/view_models/home_screen_view_model.dart';
 import 'package:provider/provider.dart';
-
 import '../models/kkphim/movie.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,15 +14,55 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // Variable
   String nameSource = 'KK Phim';
 
   @override
   void initState() {
     super.initState();
     final viewModel = Provider.of<HomeScreenViewModel>(context, listen: false);
-    viewModel.fetchSingleMovie(1);
-    viewModel.fetchSeriesMovie(1);
+    viewModel.fetchMovies();
+  }
+
+  void _showSourceList(BuildContext context) {
+    final viewModel = Provider.of<HomeScreenViewModel>(context, listen: false);
+    List<String> sourceMovie = viewModel.getSourceMovie();
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          color: Colors.black87,
+          height: 400,
+          child: ListView.builder(
+            itemCount: sourceMovie.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                title: Text(
+                  sourceMovie[index],
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+                onTap: () {
+                  setState(() {
+                    if (index == 0) {
+                      nameSource = viewModel.sourceMovie[index];
+                      // load data phim ở đây
+                    } else {
+                      final snackBar = SnackBar(
+                        content: const Text('Nguồn phim đang được cập nhập !\nChúc bạn xem phim vui vẻ'),
+                        duration: const Duration(seconds: 3),
+                        action: SnackBarAction(label: 'OK', onPressed: () {}),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
+                  });
+                  Navigator.of(context).pop();
+                },
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -45,22 +84,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Consumer<HomeScreenViewModel>(
                     builder: (context, viewModel, child) {
-                      if (viewModel.singleMovie != null) {
-                        return buildListMovie(viewModel.singleMovie!);
-                      } else {
+                      if (viewModel.isLoading) {
                         return const CircularProgressIndicator(
                           color: Colors.white,
                         );
-                      }
-                    },
-                  ),
-                  Consumer<HomeScreenViewModel>(
-                    builder: (context, viewModel, child) {
-                      if (viewModel.singleMovie != null) {
-                        return buildListMovie(viewModel.seriesMovie!);
                       } else {
-                        return const CircularProgressIndicator(
-                          color: Colors.white,
+                        return Column(
+                          children: [
+                            if (viewModel.singleMovie != null)
+                              buildListMovie(viewModel.singleMovie!),
+                            if (viewModel.seriesMovie != null)
+                              buildListMovie(viewModel.seriesMovie!),
+                          ],
                         );
                       }
                     },
@@ -75,54 +110,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
-  void _showSourceList(BuildContext context) {
-    final viewModel = Provider.of<HomeScreenViewModel>(context, listen: false);
-    List<String> sourceMovie = viewModel.getSourceMovie();
-
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          color: Colors.black87,
-          height: 400,
-          child: ListView.builder(
-            itemCount: sourceMovie.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: Text(
-                  sourceMovie[index],
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  setState(() {
-                    if (index == 0) {
-                      nameSource = viewModel.sourceMovie[index];
-                      // load data phim ở đây
-                    } else {
-                      final snackBar = SnackBar(
-                        content: const Text(
-                            'Nguồn phim đang được cập nhập !\nChúc bạn xem phim vui vẻ'),
-                        duration: const Duration(seconds: 3),
-                        action: SnackBarAction(
-                          label: 'OK',
-                          onPressed: () {},
-                        ),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    }
-                  });
-                  Navigator.of(context).pop();
-                },
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-// Header - Logo
   Widget buildLogo() {
     return Padding(
       padding: const EdgeInsets.only(left: 10, right: 10),
@@ -190,7 +177,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-// Banner Movie
   Widget buildBannerMovie() {
     return Consumer<HomeScreenViewModel>(
       builder: (context, viewModel, child) {
@@ -224,8 +210,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-// List Movie
-
   Widget buildListMovie(Movie movie) {
     return Container(
       padding: const EdgeInsets.only(top: 10, left: 5),
@@ -246,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const Text(
                   'Xem thêm',
                   style:
-                      TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
+                  TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -255,41 +239,42 @@ class _HomeScreenState extends State<HomeScreen> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: movie.data?.items?.map((item) {
-                    final url = item.posterUrl;
-                    final appDomainCdnImage = movie.data!.appDomainCdnImage;
-                    final posterUrl = '${appDomainCdnImage!}/${url!}';
-                    return Container(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: Column(
-                        children: [
-                          Container(
-                            width: 120,
-                            height: 180,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                // Poster Movie
-                                image: NetworkImage(posterUrl),
-                                fit: BoxFit.cover,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
+                final url = item.posterUrl;
+                final appDomainCdnImage = movie.data!.appDomainCdnImage;
+                final posterUrl = '${appDomainCdnImage!}/${url!}';
+                return Container(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 120,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            // Poster Movie
+                            image: NetworkImage(posterUrl),
+                            fit: BoxFit.cover,
                           ),
-                          SizedBox(
-                            width: 120,
-                            height: 42,
-                            // Name Movie
-                            child: Text(
-                              item.name ?? '',
-                              style: const TextStyle(color: Colors.white),
-                              softWrap: true,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
-                    );
-                  }).toList() ??
-                  [], // Handle null case or empty list
+                      Container(
+                        width: 120,
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Text(
+                          item.name!,
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList() ??
+                  [],
             ),
           ),
         ],
@@ -297,11 +282,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-//   Buid Button Source Movie
   Widget buildButtonSourceMovie(String nameSource) {
     return Consumer<HomeScreenViewModel>(builder: (context, viewModel, child) {
       return Positioned(
-        right: 16,
+        right: 10,
         bottom: 16,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
