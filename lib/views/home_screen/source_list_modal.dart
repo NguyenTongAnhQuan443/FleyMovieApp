@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../view_models/home_screen_view_model.dart';
 
 class SourceListModal extends StatelessWidget {
+  const SourceListModal({super.key});
+
   void _showSourceList(BuildContext context, String nameSource) {
     final viewModel = Provider.of<HomeScreenViewModel>(context, listen: false);
     List<String> sourceMovie = viewModel.getSourceMovie();

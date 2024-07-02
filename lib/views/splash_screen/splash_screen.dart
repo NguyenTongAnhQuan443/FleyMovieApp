@@ -73,21 +73,25 @@ class _SplashScreenState extends State<SplashScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  'Đang tải dữ liệu phim, Vui lòng chờ trong giây lát',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    // valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                    color: Colors.blue,
-                    strokeWidth: 3.0,
-                  ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Đang tải dữ liệu phim',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                    Text(
+                      'Vui lòng chờ trong giây lát',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                    ),
+                  ],
                 ),
               ],
             ),

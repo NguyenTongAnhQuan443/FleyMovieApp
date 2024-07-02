@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../details_movie_screen/details_movie_screen.dart';
+
 class LogoWidget extends StatelessWidget{
+  const LogoWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -24,14 +28,14 @@ class LogoWidget extends StatelessWidget{
                     TextSpan(
                       text: 'Fley',
                       style: TextStyle(
-                          fontSize: 30,
+                          fontSize: 28,
                           color: Colors.white,
                           fontWeight: FontWeight.bold),
                     ),
                     TextSpan(
                       text: 'Movie',
                       style: TextStyle(
-                          fontSize: 30,
+                          fontSize: 28,
                           color: Colors.red,
                           fontWeight: FontWeight.bold),
                     ),
@@ -43,9 +47,16 @@ class LogoWidget extends StatelessWidget{
           Row(
             children: [
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => DetailsMovieScreen(),
+                    ),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(60, 38),
+                  minimumSize: const Size(50, 32),
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.red,
                   shape: RoundedRectangleBorder(
@@ -58,7 +69,7 @@ class LogoWidget extends StatelessWidget{
                 padding: EdgeInsets.only(left: 10),
                 child: Icon(
                   Icons.menu,
-                  size: 30,
+                  size: 28,
                   color: Colors.white,
                 ),
               ),

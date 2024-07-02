@@ -21,22 +21,26 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    final viewModel = Provider.of<HomeScreenViewModel>(context, listen: false);
-    viewModel.fetchMovies();
+    Future.delayed(Duration.zero, () {
+      final viewModel = Provider.of<HomeScreenViewModel>(context, listen: false);
+      viewModel.fetchMovies();
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: Stack(
+        child:
+        Stack(
           children: [
             SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Column(
                 children: [
-                  Stack(
+                  const Stack(
                     children: [
                       BannerMovieWidget(),
                       LogoWidget(),
@@ -67,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            SourceListModal(),
+            const SourceListModal(),
           ],
         ),
       ),
