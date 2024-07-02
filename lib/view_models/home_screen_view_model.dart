@@ -1,8 +1,11 @@
-import 'package:fleymovieapp/data_sources/kkphim/api_services_single_movie.dart';
-import 'package:fleymovieapp/models/kkphim/single_movie.dart';
+import 'package:fleymovieapp/data_sources/kkphim/api_services_series_movie.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../data_sources/kkphim/api_services_single_movie.dart';
+import '../models/kkphim/movie.dart';
+
 class HomeScreenViewModel extends ChangeNotifier {
+  // Source Movie
   final List<String> sourceMovie = [
     'KK Phim',
     'Phim Mới',
@@ -10,6 +13,7 @@ class HomeScreenViewModel extends ChangeNotifier {
     'Chill Hay'
   ];
 
+  // Source banner
   final List<String> imageBannerUrls = [
     'https://cinema.momocdn.net/img/51864595072123353-wEXCCYzbslBJoym4aeiIV2V7cGz.jpg',
     'https://static2.vieon.vn/vieplay-image/poster_v4/2022/08/25/0snqk97o_660x946-tiemcapheluat.jpg',
@@ -24,21 +28,43 @@ class HomeScreenViewModel extends ChangeNotifier {
     return sourceMovie;
   }
 
-  //Fetch Data
-  // SingleMovie? _singleMovie;
-  //
-  // SingleMovie? get singleMovie => _singleMovie;
-  //
-  // Future<void> fetchSingleMovie(int page) async {
-  //   ApiServicesSingleMovie apiService = ApiServicesSingleMovie(page);
-  //   try {
-  //     SingleMovie singleMovie = await apiService.fetchMovie();
-  //     _singleMovie = singleMovie;
-  //   } catch (e) {
-  //     print('Error: $e');
-  //     _singleMovie = null;
-  //   }
-  //   notifyListeners(); // Notify các widget đã đăng ký để cập nhật lại
-  // }
+  // Fetch data single movie
+  Movie? _singleMovie;
 
+  Movie? get singleMovie => _singleMovie;
+
+  Future<void> fetchSingleMovie(int page) async {
+    ApiServicesSingleMovie apiService = ApiServicesSingleMovie(page);
+    try {
+      Movie movie = await apiService.fetchMovie();
+      if (movie.data != null && movie.data!.items != null) {
+        _singleMovie = movie;
+      } else {
+        _singleMovie = null;
+      }
+    } catch (e) {
+      _singleMovie = null;
+    }
+    notifyListeners();
+  }
+
+  // Fetch data series movie
+  Movie? _seriesMovie;
+
+  Movie? get seriesMovie => _seriesMovie;
+
+  Future<void> fetchSeriesMovie(int page) async {
+    ApiServicesSeriesMovie apiService = ApiServicesSeriesMovie(page);
+    try {
+      Movie movie = await apiService.fetchMovie();
+      if (movie.data != null && movie.data!.items != null) {
+        _seriesMovie = movie;
+      } else {
+        _seriesMovie = null;
+      }
+    } catch (e) {
+      _seriesMovie = null;
+    }
+    notifyListeners();
+  }
 }

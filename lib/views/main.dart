@@ -8,7 +8,7 @@ void main() async {
 }
 
 class FleyMovieApp extends StatelessWidget{
-  const FleyMovieApp({Key? key}) : super(key: key);
+  const FleyMovieApp({super.key});
 
   @override
   Widget build(BuildContext context) {

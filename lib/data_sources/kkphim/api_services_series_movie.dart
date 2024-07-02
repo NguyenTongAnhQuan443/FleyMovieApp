@@ -5,13 +5,13 @@ import 'dart:convert' as json;
 import '../../models/kkphim/movie.dart';
 import 'fetch_data_exception.dart';
 
-class ApiServicesSingleMovie {
+class ApiServicesSeriesMovie {
   int page;
 
-  ApiServicesSingleMovie(this.page);
+  ApiServicesSeriesMovie(this.page);
 
   Future<Movie> fetchMovie() async {
-    final response = await http.get(Uri.parse('https://phimapi.com/v1/api/danh-sach/phim-le?page=$page'));
+    final response = await http.get(Uri.parse('https://phimapi.com/v1/api/danh-sach/phim-bo?page=$page'));
 
     if (response.statusCode == 200) {
       return Movie.fromJson(json.jsonDecode(response.body));
