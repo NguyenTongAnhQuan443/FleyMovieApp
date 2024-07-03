@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import '../data_sources/kkphim/api_services_movie.dart';
 import '../models/kkphim/movie.dart';
 
@@ -53,4 +56,39 @@ class HomeScreenViewModel extends ChangeNotifier {
       return null;
     }
   }
+
+  // Check Image Valid
+
+  Future<bool> checkImageUrl(String imageUrl) async {
+    HttpClient client = HttpClient();
+    try {
+      HttpClientRequest request = await client.getUrl(Uri.parse(imageUrl));
+      HttpClientResponse response = await request.close();
+
+      // Kiểm tra nếu mã trạng thái là 200 (OK)
+      if (response.statusCode == HttpStatus.ok) {
+        // Đọc dữ liệu từ phản hồi để kiểm tra nếu là dữ liệu hình ảnh hợp lệ
+        List<int> bytes = await consolidateHttpClientResponseBytes(response);
+
+        if (_isImage(bytes)) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    } finally {
+      client.close();
+    }
+  }
+
+  // Hàm kiểm tra nếu dữ liệu là hình ảnh hợp lệ
+  bool _isImage(List<int> bytes) {
+    if (bytes.length < 4) return false;
+    return true;
+  }
+
 }
