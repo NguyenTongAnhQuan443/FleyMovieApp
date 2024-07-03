@@ -81,7 +81,16 @@ class _DetailsMovieScreenState extends State<DetailsMovieScreen>{
                             Expanded(
                               flex:2,
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const DetailsMovieScreen(),
+                                    ),
+                                  );
+                                  print('object');
+                                },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.red,
                                   foregroundColor: Colors.white,
@@ -157,10 +166,10 @@ class _DetailsMovieScreenState extends State<DetailsMovieScreen>{
                 ],
               ),
             ),
-            AppBar(
-              backgroundColor: Colors.transparent,
-              foregroundColor: Colors.white,
-            ),
+            // AppBar(
+            //   backgroundColor: Colors.transparent,
+            //   foregroundColor: Colors.white,
+            // ),
           ],
         ),
       ),

@@ -203,6 +203,25 @@ class Items {
 
   Items({this.modified, this.id, this.name, this.slug, this.originName, this.type, this.posterUrl, this.thumbUrl, this.subDocquyen, this.chieurap, this.time, this.episodeCurrent, this.quality, this.lang, this.year, this.category, this.country});
 
+  Items.create(
+      this.modified,
+      this.id,
+      this.name,
+      this.slug,
+      this.originName,
+      this.type,
+      this.posterUrl,
+      this.thumbUrl,
+      this.subDocquyen,
+      this.chieurap,
+      this.time,
+      this.episodeCurrent,
+      this.quality,
+      this.lang,
+      this.year,
+      this.category,
+      this.country);
+
   Items.fromJson(Map<String, dynamic> json) {
     if(json["modified"] is Map) {
       modified = json["modified"] == null ? null : Modified.fromJson(json["modified"]);
@@ -284,7 +303,9 @@ class Items {
     }
     return _data;
   }
+  
 }
+
 
 class Country {
   String? id;
