@@ -3,15 +3,13 @@ import 'package:flutter/material.dart';
 class DetailsMovieScreen extends StatefulWidget {
   const DetailsMovieScreen({super.key});
 
-
-
   @override
   State<StatefulWidget> createState() {
     return _DetailsMovieScreenState();
   }
 }
 
-class _DetailsMovieScreenState extends State<DetailsMovieScreen>{
+class _DetailsMovieScreenState extends State<DetailsMovieScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,8 +30,8 @@ class _DetailsMovieScreenState extends State<DetailsMovieScreen>{
                   const SizedBox(
                     height: 10,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10),
+                  Container(
+                    margin: EdgeInsets.only(left: 10),
                     child: Row(
                       children: [
                         Column(
@@ -75,18 +73,18 @@ class _DetailsMovieScreenState extends State<DetailsMovieScreen>{
                     child: Container(
                       padding: const EdgeInsets.only(top: 10),
                       child: Container(
-                        padding: const EdgeInsets.only(top:10),
+                        padding: const EdgeInsets.only(top: 10),
                         child: Row(
                           children: [
                             Expanded(
-                              flex:2,
+                              flex: 2,
                               child: ElevatedButton(
                                 onPressed: () {
-
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const DetailsMovieScreen(),
+                                      builder: (context) =>
+                                          const DetailsMovieScreen(),
                                     ),
                                   );
                                   print('object');
@@ -107,7 +105,8 @@ class _DetailsMovieScreenState extends State<DetailsMovieScreen>{
                             ),
                             Expanded(
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Container(
                                     height: 50,
@@ -139,7 +138,6 @@ class _DetailsMovieScreenState extends State<DetailsMovieScreen>{
                                       ),
                                     ),
                                   ),
-
                                 ],
                               ),
                             ),
@@ -153,7 +151,12 @@ class _DetailsMovieScreenState extends State<DetailsMovieScreen>{
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text('Đang xem trên nguồn: KK PHIM', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 16),
+                        Text(
+                          'Đang xem trên nguồn: KK PHIM',
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16),
                         ),
                       ],
                     ),

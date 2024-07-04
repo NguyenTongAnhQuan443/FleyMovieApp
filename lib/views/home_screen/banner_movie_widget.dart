@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../view_models/home_screen_view_model.dart';
 
-class BannerMovieWidget extends StatelessWidget{
+class BannerMovieWidget extends StatelessWidget {
   const BannerMovieWidget({super.key});
 
   @override
@@ -12,8 +12,8 @@ class BannerMovieWidget extends StatelessWidget{
       builder: (context, viewModel, child) {
         List<String> imageBannerUrls = viewModel.getImageBannerUrls();
 
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
+        return Container(
+          margin: const EdgeInsets.only(bottom: 10),
           child: SizedBox(
             height: 500,
             child: PageView.builder(
@@ -39,5 +39,4 @@ class BannerMovieWidget extends StatelessWidget{
       },
     );
   }
-  
 }

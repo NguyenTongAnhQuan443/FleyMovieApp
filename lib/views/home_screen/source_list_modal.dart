@@ -21,7 +21,8 @@ class SourceListModal extends StatelessWidget {
               return ListTile(
                 title: Text(
                   sourceMovie[index],
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 onTap: () {
                   Navigator.pop(context); // Close the bottom sheet
@@ -30,7 +31,8 @@ class SourceListModal extends StatelessWidget {
                     // Load data phim ở đây
                   } else {
                     final snackBar = SnackBar(
-                      content: const Text('Nguồn phim đang được cập nhập !\nChúc bạn xem phim vui vẻ'),
+                      content: const Text(
+                          'Nguồn phim đang được cập nhập !\nChúc bạn xem phim vui vẻ'),
                       duration: const Duration(seconds: 3),
                       action: SnackBarAction(label: 'OK', onPressed: () {}),
                     );
@@ -48,7 +50,8 @@ class SourceListModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<HomeScreenViewModel>(context, listen: false);
-    String nameSource = viewModel.getSourceMovie()[0]; // Initialize with default source
+    String nameSource =
+        viewModel.getSourceMovie()[0]; // Initialize with default source
 
     return Positioned(
       right: 10,

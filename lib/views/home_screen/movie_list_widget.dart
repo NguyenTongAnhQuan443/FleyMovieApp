@@ -14,122 +14,159 @@ class MovieListWidget extends StatelessWidget {
     return Consumer<HomeScreenViewModel>(
       builder: (context, viewModel, child) {
         return Container(
-          padding: const EdgeInsets.only(top: 10, left: 5),
+          margin: const EdgeInsets.only(top: 10, left: 8),
           child: Column(
             children: [
-              Container(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      movie.data!.titlePage!,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const Text(
-                      'Xem thêm',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              buildTitlePage(),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: movie.data?.items?.map((item) {
-                    final url = item.posterUrl;
-                    final appDomainCdnImage = movie.data!.appDomainCdnImage;
-                    final posterUrl = '${appDomainCdnImage!}/${url!}';
-                    return FutureBuilder<bool>(
-                      future: viewModel.checkImageUrl(posterUrl),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Container(
-                            width: 120,
-                            height: 180,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.grey.withOpacity(0.5),
-                              ),
-                            ),
-                          );
-                        } else {
-                          if (snapshot.hasData && snapshot.data!) {
-                            return InkWell(
-                              child: Container(
-                                width: 120,
-                                height: 180,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
-                                    posterUrl,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          color: Colors.grey.withOpacity(0.5),
-                                          value: loadingProgress.expectedTotalBytes != null
-                                              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                              : null,
-                                        ),
-                                      );
-                                    },
-                                    errorBuilder: (context, error, stackTrace) =>
-                                        Image.asset(
-                                          'assets/images/default_poster.jpg',
-                                          fit: BoxFit.cover,
-                                        ),
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                    const DetailsMovieScreen(),
-                                  ),
-                                );
-                              },
-                            );
-                          } else {
-                            return Container(
-                              width: 120,
-                              height: 180,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.grey.withOpacity(0.5),
-                              ),
-                              child: Center(
-                                child: Icon(
-                                  Icons.error,
-                                  color: Colors.white,
-                                  size: 40,
-                                ),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                    );
-                  }).toList() ??
+                        final url = item.posterUrl;
+                        final appDomainCdnImage = movie.data!.appDomainCdnImage;
+                        final posterUrl = '${appDomainCdnImage!}/${url!}';
+                        return FutureBuilder<bool>(
+                          future: viewModel.checkImageUrl(posterUrl),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return buildPosterAndTitleMovie(item, context);
+                            } else {
+                              if (snapshot.hasData && snapshot.data!) {
+                                return buildPosterAndMovieDataTrue(
+                                    item, posterUrl, context);
+                              } else {
+                                return buildPosterAndTitleMovie(item, context);
+                              }
+                            }
+                          },
+                        );
+                      }).toList() ??
                       [],
                 ),
               ),
             ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Build Title Page
+  Widget buildTitlePage() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            movie.data!.titlePage!,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const Text(
+            'Xem thêm',
+            style: TextStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget Image Default
+  Widget buildImageDefault() {
+    return Image.asset(
+      'assets/images/default_poster.jpg',
+      fit: BoxFit.cover,
+    );
+  }
+
+  // Build Title Movie
+  Widget buildTitleMovie(Items item) {
+    return Container(
+      width: 110,
+      height: 50,
+      padding: const EdgeInsets.only(top: 5),
+      child: Text(
+        item.name!,
+        maxLines: 2,
+        textAlign: TextAlign.center,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
+
+// Build Poster And Title Movie (Poster error or waiting)
+  Widget buildPosterAndTitleMovie(Items item, context) {
+    return InkWell(
+      child: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            width: 120,
+            height: 180,
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: buildImageDefault(),
+              ),
+            ),
+          ),
+          buildTitleMovie(item),
+        ],
+      ),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const DetailsMovieScreen()));
+      },
+    );
+  }
+
+  // Build Poster And Title (Data true)
+  Widget buildPosterAndMovieDataTrue(Items item, String posterUrl, context) {
+    return InkWell(
+      child: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            width: 120,
+            height: 180,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                posterUrl,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  }
+                  return buildImageDefault();
+                },
+                errorBuilder: (context, error, stackTrace) =>
+                    buildImageDefault(),
+              ),
+            ),
+          ),
+          buildTitleMovie(item),
+        ],
+      ),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DetailsMovieScreen(),
           ),
         );
       },

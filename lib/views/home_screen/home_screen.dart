@@ -22,19 +22,18 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
-      final viewModel = Provider.of<HomeScreenViewModel>(context, listen: false);
+      final viewModel =
+          Provider.of<HomeScreenViewModel>(context, listen: false);
       viewModel.fetchMovies();
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child:
-        Stack(
+        child: Stack(
           children: [
             SingleChildScrollView(
               scrollDirection: Axis.vertical,
