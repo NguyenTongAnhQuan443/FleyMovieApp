@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import Provider package
 import '../../models/kkphim/movie.dart';
@@ -25,20 +26,32 @@ class MovieListWidget extends StatelessWidget {
                         final url = item.posterUrl;
                         final appDomainCdnImage = movie.data!.appDomainCdnImage;
                         final posterUrl = '${appDomainCdnImage!}/${url!}';
-                        return FutureBuilder<bool>(
-                          future: viewModel.checkImageUrl(posterUrl),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return buildPosterAndTitleMovie(item, context);
-                            } else {
-                              if (snapshot.hasData && snapshot.data!) {
-                                return buildPosterAndMovieDataTrue(
-                                    item, posterUrl, context);
-                              } else {
+                        return InkWell(
+                          child: FutureBuilder<bool>(
+                            future: viewModel.checkImageUrl(posterUrl),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
                                 return buildPosterAndTitleMovie(item, context);
+                              } else {
+                                if (snapshot.hasData && snapshot.data!) {
+                                  return buildPosterAndMovieDataTrue(
+                                      item, posterUrl, context);
+                                } else {
+                                  return buildPosterAndTitleMovie(
+                                      item, context);
+                                }
                               }
-                            }
+                            },
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const DetailsMovieScreen(),
+                              ),
+                            );
                           },
                         );
                       }).toList() ??
@@ -108,68 +121,55 @@ class MovieListWidget extends StatelessWidget {
 
 // Build Poster And Title Movie (Poster error or waiting)
   Widget buildPosterAndTitleMovie(Items item, context) {
-    return InkWell(
-      child: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(right: 10),
-            width: 120,
-            height: 180,
-            child: Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: buildImageDefault(),
-              ),
+    return Column(
+      children: [
+        Container(
+          margin: const EdgeInsets.only(right: 10),
+          width: 120,
+          height: 180,
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: buildImageDefault(),
             ),
           ),
-          buildTitleMovie(item),
-        ],
-      ),
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const DetailsMovieScreen()));
-      },
+        ),
+        buildTitleMovie(item),
+      ],
     );
   }
 
   // Build Poster And Title (Data true)
   Widget buildPosterAndMovieDataTrue(Items item, String posterUrl, context) {
-    return InkWell(
-      child: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(right: 10),
-            width: 120,
-            height: 180,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                posterUrl,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) {
-                    return child;
-                  }
-                  return buildImageDefault();
-                },
-                errorBuilder: (context, error, stackTrace) =>
-                    buildImageDefault(),
+    return Column(
+      children: [
+        Container(
+          margin: const EdgeInsets.only(right: 10),
+          width: 120,
+          height: 180,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: CachedNetworkImage(
+              imageUrl: posterUrl,
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
+              placeholder: (context, url) => const CircularProgressIndicator(
+                color: Colors.grey,
+                strokeWidth: 3.0,
+              ),
+              errorWidget: (context, url, error) =>
+                  buildPosterAndTitleMovie(item, context),
             ),
           ),
-          buildTitleMovie(item),
-        ],
-      ),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const DetailsMovieScreen(),
-          ),
-        );
-      },
+        ),
+        buildTitleMovie(item),
+      ],
     );
   }
 }

@@ -21,11 +21,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
-      final viewModel =
-          Provider.of<HomeScreenViewModel>(context, listen: false);
-      viewModel.fetchMovies();
-    });
   }
 
   @override
