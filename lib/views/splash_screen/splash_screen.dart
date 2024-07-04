@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 
 import '../../view_models/home_screen_view_model.dart';
@@ -22,11 +23,17 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _fetchData() async {
     final viewModel = Provider.of<HomeScreenViewModel>(context, listen: false);
-    await viewModel.fetchMovies();
-    if (!viewModel.isLoading) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-    }
+
+    // Dùng SchedulerBinding để đợi build widget hoàn tất mới lắng nghe notifyListeners từ viewModel
+    SchedulerBinding.instance.addPostFrameCallback(
+      (_) async {
+        await viewModel.fetchMovies();
+        if (!viewModel.isLoading) {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()));
+        }
+      },
+    );
   }
 
   @override
