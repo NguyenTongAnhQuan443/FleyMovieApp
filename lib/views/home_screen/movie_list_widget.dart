@@ -159,10 +159,6 @@ class MovieListWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              placeholder: (context, url) => const CircularProgressIndicator(
-                color: Colors.grey,
-                strokeWidth: 3.0,
-              ),
               errorWidget: (context, url, error) =>
                   buildPosterAndTitleMovie(item, context),
             ),
