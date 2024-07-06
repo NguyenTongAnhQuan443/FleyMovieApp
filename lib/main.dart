@@ -7,13 +7,15 @@ void main() async {
   runApp(const FleyMovieApp());
 }
 
-class FleyMovieApp extends StatelessWidget{
+class FleyMovieApp extends StatelessWidget {
   const FleyMovieApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => HomeScreenViewModel(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => HomeScreenViewModel()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'FleyMovie',

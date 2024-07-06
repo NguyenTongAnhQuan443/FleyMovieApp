@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class LogoWidget extends StatelessWidget {
   const LogoWidget({super.key});
 
@@ -55,7 +56,7 @@ class LogoWidget extends StatelessWidget {
                 ),
                 child: const Text('Premium'),
               ),
-               Container(
+              Container(
                 margin: const EdgeInsets.only(left: 10),
                 child: const Icon(
                   Icons.menu,

@@ -1,13 +1,13 @@
 
-class MovieInformationAndMovieList {
+class MovieDetails {
   bool? status;
   String? msg;
   Movie? movie;
   List<Episodes>? episodes;
 
-  MovieInformationAndMovieList({this.status, this.msg, this.movie, this.episodes});
+  MovieDetails({this.status, this.msg, this.movie, this.episodes});
 
-  MovieInformationAndMovieList.fromJson(Map<String, dynamic> json) {
+  MovieDetails.fromJson(Map<String, dynamic> json) {
     if(json["status"] is bool) {
       status = json["status"];
     }

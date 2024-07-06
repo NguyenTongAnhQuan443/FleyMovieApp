@@ -1,10 +1,16 @@
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as json;
 import 'package:flutter/foundation.dart';
-import '../data_sources/kkphim/api_services_movie.dart';
-import '../models/kkphim/movie.dart';
+import '../../models/kkphim/movie.dart';
 
 class HomeScreenViewModel extends ChangeNotifier {
-  final List<String> sourceMovie = ['KK Phim', 'Phim Mới', 'Mọt Phim', 'Chill Hay'];
+  final List<String> sourceMovie = [
+    'KK Phim',
+    'Phim Mới',
+    'Mọt Phim',
+    'Chill Hay'
+  ];
   final List<String> imageBannerUrls = [
     'https://cinema.momocdn.net/img/51864595072123353-wEXCCYzbslBJoym4aeiIV2V7cGz.jpg',
     'https://static2.vieon.vn/vieplay-image/poster_v4/2022/08/25/0snqk97o_660x946-tiemcapheluat.jpg',
@@ -12,6 +18,7 @@ class HomeScreenViewModel extends ChangeNotifier {
   ];
 
   List<String> getImageBannerUrls() => imageBannerUrls;
+
   List<String> getSourceMovie() => sourceMovie;
 
   Movie? _singleMovie;
@@ -21,9 +28,13 @@ class HomeScreenViewModel extends ChangeNotifier {
   bool _isLoading = false;
 
   Movie? get singleMovie => _singleMovie;
+
   Movie? get seriesMovie => _seriesMovie;
+
   Movie? get cartoonMovie => _cartoonMovie;
+
   Movie? get tiviShows => _tiviShows;
+
   bool get isLoading => _isLoading;
 
   Future<void> fetchMovies() async {
@@ -46,16 +57,19 @@ class HomeScreenViewModel extends ChangeNotifier {
   }
 
   Future<Movie?> _fetchMovie(String movieType, int page) async {
-    ApiServicesMovie apiService = ApiServicesMovie(page, movieType);
     try {
-      Movie movie = await apiService.fetchMovie();
-      return movie.data?.items != null ? movie : null;
+      final response = await http.get(Uri.parse('https://phimapi.com/v1/api/danh-sach/$movieType?page=$page'));
+
+      if (response.statusCode == 200) {
+        Movie movie = Movie.fromJson(json.jsonDecode(response.body));
+        return movie.data?.items != null ? movie : null;
+      } else {
+        return null;
+      }
     } catch (e) {
       return null;
     }
   }
-
-  // Check Image Valid
 
   Future<bool> checkImageUrl(String imageUrl) async {
     HttpClient client = HttpClient();
@@ -63,11 +77,8 @@ class HomeScreenViewModel extends ChangeNotifier {
       HttpClientRequest request = await client.getUrl(Uri.parse(imageUrl));
       HttpClientResponse response = await request.close();
 
-      // Kiểm tra nếu mã trạng thái là 200 (OK)
       if (response.statusCode == HttpStatus.ok) {
-        // Đọc dữ liệu từ phản hồi để kiểm tra nếu là dữ liệu hình ảnh hợp lệ
         List<int> bytes = await consolidateHttpClientResponseBytes(response);
-
         if (_isImage(bytes)) {
           return true;
         } else {
@@ -83,10 +94,8 @@ class HomeScreenViewModel extends ChangeNotifier {
     }
   }
 
-  // Hàm kiểm tra nếu dữ liệu là hình ảnh hợp lệ
   bool _isImage(List<int> bytes) {
     if (bytes.length < 4) return false;
     return true;
   }
-
 }

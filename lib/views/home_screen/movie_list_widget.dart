@@ -1,9 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fleymovieapp/view_models/movie_details_screen_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import Provider package
 import '../../models/kkphim/movie.dart';
 import '../../view_models/home_screen_view_model.dart';
-import '../details_movie_screen/details_movie_screen.dart';
+import '../details_movie_screen/movie_details_screen.dart';
 
 class MovieListWidget extends StatelessWidget {
   final Movie movie;
@@ -45,12 +46,10 @@ class MovieListWidget extends StatelessWidget {
                             },
                           ),
                           onTap: () {
+                            String? slugMovie = item.slug;
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const DetailsMovieScreen(),
-                              ),
+                              MaterialPageRoute(builder: (context) => MovieDetailsScreen(slugMovie!),),
                             );
                           },
                         );
