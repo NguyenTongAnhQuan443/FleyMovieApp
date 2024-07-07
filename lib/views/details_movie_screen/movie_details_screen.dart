@@ -73,7 +73,7 @@ class _DetailsMovieScreenState extends State<MovieDetailsScreen> {
                         ],
                       ),
                     ),
-                    onTapArrow(),
+                    onTapArrowBack(),
                   ],
                 );
               } else {
@@ -92,7 +92,7 @@ class _DetailsMovieScreenState extends State<MovieDetailsScreen> {
   }
 
   // OnTap Button Arrow
-  Widget onTapArrow() {
+  Widget onTapArrowBack() {
     return IconButton(
       onPressed: () {
         Navigator.of(context).pop();
