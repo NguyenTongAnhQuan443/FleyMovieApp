@@ -1,7 +1,7 @@
 import 'package:fleymovieapp/views/details_movie_screen/build_category_movie.dart';
 import 'package:fleymovieapp/views/details_movie_screen/build_details_movie.dart';
+import 'package:fleymovieapp/views/details_movie_screen/build_episode.dart';
 import 'package:fleymovieapp/views/details_movie_screen/build_poster.dart';
-import 'package:fleymovieapp/models/kkphim/movie_details.dart';
 import 'package:fleymovieapp/view_models/movie_details_screen_view_model.dart';
 import 'package:fleymovieapp/views/details_movie_screen/build_source_movie.dart';
 import 'package:fleymovieapp/views/details_movie_screen/build_title_movie.dart';
@@ -67,9 +67,9 @@ class _DetailsMovieScreenState extends State<MovieDetailsScreen> {
 
                           const BuildSourceMovie(),
 
-                          BuildDetailsMovie(viewModel.movieDetails!),
+                          BuildEpisode(viewModel.movieDetails!),
 
-                          // buildEpisode(items), FIX SAU
+                          BuildDetailsMovie(viewModel.movieDetails!),
                         ],
                       ),
                     ),
@@ -79,7 +79,7 @@ class _DetailsMovieScreenState extends State<MovieDetailsScreen> {
               } else {
                 return const Center(
                   child: Text(
-                    'Chúng mình đang cố gắn khắc phục\nbạn hãy quay lại thử lại sau nhé <3',
+                    'Chúng mình đang cố gắng khắc phục\nbạn hãy quay lại thử lại sau nhé <3',
                     style: TextStyle(color: Colors.white),
                   ),
                 );
@@ -101,56 +101,6 @@ class _DetailsMovieScreenState extends State<MovieDetailsScreen> {
         Icons.arrow_back,
         color: Colors.white,
       ),
-    );
-  }
-
-// Widget Episode
-  Widget buildEpisode(List<int> items) {
-    return Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.only(left: 10, top: 20),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                'Full HD - Danh sách tập',
-                style: TextStyle(color: Colors.red, fontSize: 14),
-              ),
-            ],
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.all(20),
-          child: GridView.builder(
-            shrinkWrap: true,
-            // cho phép gridView điều chỉnh theo nội dung
-            physics: const NeverScrollableScrollPhysics(),
-            // không cho phép gridView cuộn
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4, // Số lượng phần tử trên 1 hàng
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                childAspectRatio: 2.4),
-            // chiều rộng gắp 2.5 lần chiều cao
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              return Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Center(
-                  child: Text(
-                    '${items[index]}',
-                    style: const TextStyle(color: Colors.white, fontSize: 12),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
     );
   }
 }

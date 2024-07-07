@@ -41,10 +41,18 @@ class HomeScreenViewModel extends ChangeNotifier {
     try {
       _isLoading = true;
       notifyListeners();
-      _singleMovie = await _fetchMovie('phim-le', 1);
-      _seriesMovie = await _fetchMovie('phim-bo', 1);
-      _cartoonMovie = await _fetchMovie('hoat-hinh', 1);
-      _tiviShows = await _fetchMovie('tv-shows', 1);
+
+      final result = await Future.wait([
+        _fetchMovie('phim-le', 1),
+        _fetchMovie('phim-bo', 1),
+        _fetchMovie('hoat-hinh', 1),
+        _fetchMovie('tv-shows', 1)
+      ]);
+
+      _singleMovie = result[0];
+      _seriesMovie = result[1];
+      _cartoonMovie = result[2];
+      _tiviShows = result[3];
     } catch (e) {
       _singleMovie = null;
       _seriesMovie = null;
@@ -58,7 +66,8 @@ class HomeScreenViewModel extends ChangeNotifier {
 
   Future<Movie?> _fetchMovie(String movieType, int page) async {
     try {
-      final response = await http.get(Uri.parse('https://phimapi.com/v1/api/danh-sach/$movieType?page=$page'));
+      final response = await http.get(Uri.parse(
+          'https://phimapi.com/v1/api/danh-sach/$movieType?page=$page'));
 
       if (response.statusCode == 200) {
         Movie movie = Movie.fromJson(json.jsonDecode(response.body));
