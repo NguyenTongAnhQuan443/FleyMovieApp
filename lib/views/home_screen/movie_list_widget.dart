@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:fleymovieapp/view_models/movie_details_screen_view_model.dart';
+import 'package:fleymovieapp/views/more_movies_screen/more_movies.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import Provider package
 import '../../models/kkphim/movie.dart';
@@ -19,7 +19,7 @@ class MovieListWidget extends StatelessWidget {
           margin: const EdgeInsets.only(top: 10, left: 8),
           child: Column(
             children: [
-              buildTitlePage(),
+              buildTitlePage(context),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -49,7 +49,10 @@ class MovieListWidget extends StatelessWidget {
                             String? slugMovie = item.slug;
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => MovieDetailsScreen(slugMovie!),),
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    MovieDetailsScreen(slugMovie!),
+                              ),
                             );
                           },
                         );
@@ -65,7 +68,7 @@ class MovieListWidget extends StatelessWidget {
   }
 
   // Build Title Page
-  Widget buildTitlePage() {
+  Widget buildTitlePage(context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       child: Row(
@@ -79,12 +82,18 @@ class MovieListWidget extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const Text(
-            'Xem thêm',
-            style: TextStyle(
-              color: Colors.red,
-              fontWeight: FontWeight.w500,
+          InkWell(
+            child: const Text(
+              'Xem thêm',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.w500,
+              ),
             ),
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => MoreMoviesScreen()));
+            },
           ),
         ],
       ),

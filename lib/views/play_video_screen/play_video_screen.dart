@@ -125,6 +125,13 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
     _controller.seekTo(newPosition < duration ? newPosition : duration);
   }
 
+  void _onSliderChanged(double value) {
+    setState(() {
+      _currentSliderValue = value;
+      _controller.seekTo(Duration(seconds: value.toInt()));
+    });
+  }
+
   Orientation get orientation => MediaQuery.of(context).orientation;
 
   @override
@@ -140,21 +147,21 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
             Center(
               child: _controller.value.isInitialized
                   ? Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        AspectRatio(
-                          aspectRatio: orientation == Orientation.portrait
-                              ? 16 / 9
-                              : screenWidth / screenHeight,
-                          child: VideoPlayer(_controller),
-                        ),
-                        if (_showControls && !_lockScreen) buildDuration(),
-                        if (_showControls && !_lockScreen) buildProgressVideo(),
-                      ],
-                    )
+                alignment: Alignment.bottomCenter,
+                children: [
+                  AspectRatio(
+                    aspectRatio: orientation == Orientation.portrait
+                        ? 16 / 9
+                        : screenWidth / screenHeight,
+                    child: VideoPlayer(_controller),
+                  ),
+                  if (_showControls && !_lockScreen) buildDuration(),
+                  if (_showControls && !_lockScreen) buildProgressVideo(),
+                ],
+              )
                   : const CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
+                color: Colors.white,
+              ),
             ),
             if (_showControls && !_lockScreen) buildIconBack(),
             if (_showControls && !_lockScreen) buildReplayPauseforwardVideo(),
@@ -268,7 +275,7 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
     );
   }
 
-// Widget build Progress video
+  // Widget build Progress video
   Widget buildProgressVideo() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -276,20 +283,21 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
         Container(
           margin: const EdgeInsets.only(left: 70, right: 70, bottom: 50),
           width: double.infinity,
-          height: 8,
-          child: VideoProgressIndicator(
-            _controller,
-            allowScrubbing: true,
-            colors: VideoProgressColors(
-              playedColor: Colors.red,
-              backgroundColor: Colors.black.withOpacity(0.5),
-            ),
+          height: 5,
+          child: Slider(
+            value: _currentSliderValue,
+            min: 0,
+            max: _totalDuration,
+            onChanged: _onSliderChanged,
+            activeColor: Colors.red,
+            inactiveColor: Colors.grey,
           ),
         ),
       ],
     );
   }
 
+  // Lock Screen
   Widget buildLockScreen() {
     return Positioned(
       bottom: 10,
@@ -324,12 +332,12 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
                   data: SliderTheme.of(context).copyWith(
                     trackHeight: 2.0, // Độ mỏng của thanh trượt
                     thumbShape:
-                        const RoundSliderThumbShape(enabledThumbRadius: 5.0),
+                    const RoundSliderThumbShape(enabledThumbRadius: 5.0),
                     overlayShape:
-                        const RoundSliderOverlayShape(overlayRadius: 24.0),
+                    const RoundSliderOverlayShape(overlayRadius: 24.0),
                   ),
                   child: Slider(
-                    activeColor: Colors.blue,
+                    activeColor: Colors.red,
                     value: _brightness,
                     min: 0.0,
                     max: 1.0,
@@ -370,12 +378,12 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
                   data: SliderTheme.of(context).copyWith(
                     trackHeight: 2.0, // Độ mỏng của thanh trượt
                     thumbShape:
-                        const RoundSliderThumbShape(enabledThumbRadius: 5.0),
+                    const RoundSliderThumbShape(enabledThumbRadius: 5.0),
                     overlayShape:
-                        const RoundSliderOverlayShape(overlayRadius: 24.0),
+                    const RoundSliderOverlayShape(overlayRadius: 24.0),
                   ),
                   child: Slider(
-                    activeColor: Colors.blue,
+                    activeColor: Colors.red,
                     value: _volume,
                     min: 0.0,
                     max: 1.0,
