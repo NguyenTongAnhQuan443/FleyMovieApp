@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/services.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 
 class PlayVideoScreen extends StatefulWidget {
   final String movieUrl;
@@ -23,6 +24,8 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
   Timer? _hideControlsTimer;
   bool _isPause = false;
   bool _lockScreen = false;
+  double _brightness = 0.5;
+  double _volume = 0.5;
 
   _PlayVideoScreenState(this.movieUrl);
 
@@ -69,11 +72,6 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
     if (!_lockScreen) {
       setState(() {
         _showControls = !_showControls;
-        if (_showControls) {
-          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-        } else {
-          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-        }
       });
       if (_showControls && !_isPause) {
         _startTimerToHideControls();
@@ -94,7 +92,6 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
       setState(() {
         if (!_isPause && !_lockScreen) {
           _showControls = false;
-          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
         }
       });
     });
@@ -161,6 +158,8 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
             ),
             if (_showControls && !_lockScreen) buildIconBack(),
             if (_showControls && !_lockScreen) buildReplayPauseforwardVideo(),
+            if (_showControls && !_lockScreen) buildVolumeSlider(),
+            if (_showControls && !_lockScreen) buildBrightnessSlider(),
             buildLockScreen(),
           ],
         ),
@@ -299,11 +298,6 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
         onPressed: () {
           setState(() {
             _lockScreen = !_lockScreen;
-            if (_lockScreen) {
-              SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-            } else {
-              SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-            }
           });
         },
         icon: Icon(
@@ -312,6 +306,96 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
           size: 20,
         ),
       ),
+    );
+  }
+
+  // Widget Brightness Slider
+  Widget buildBrightnessSlider() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            RotatedBox(
+              quarterTurns: 3,
+              child: SizedBox(
+                child: SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    trackHeight: 2.0, // Độ mỏng của thanh trượt
+                    thumbShape:
+                        const RoundSliderThumbShape(enabledThumbRadius: 5.0),
+                    overlayShape:
+                        const RoundSliderOverlayShape(overlayRadius: 24.0),
+                  ),
+                  child: Slider(
+                    activeColor: Colors.blue,
+                    value: _brightness,
+                    min: 0.0,
+                    max: 1.0,
+                    onChanged: (value) {
+                      setState(() {
+                        _brightness = value;
+                        ScreenBrightness().setScreenBrightness(value);
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.sunny,
+              color: Colors.white,
+              size: 20,
+            )
+          ],
+        ),
+      ],
+    );
+  }
+
+  // Widget Build Volume Slider
+
+  Widget buildVolumeSlider() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            RotatedBox(
+              quarterTurns: 3, // Xoay
+              child: SizedBox(
+                child: SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    trackHeight: 2.0, // Độ mỏng của thanh trượt
+                    thumbShape:
+                        const RoundSliderThumbShape(enabledThumbRadius: 5.0),
+                    overlayShape:
+                        const RoundSliderOverlayShape(overlayRadius: 24.0),
+                  ),
+                  child: Slider(
+                    activeColor: Colors.blue,
+                    value: _volume,
+                    min: 0.0,
+                    max: 1.0,
+                    onChanged: (value) {
+                      setState(() {
+                        _volume = value;
+                        _controller.setVolume(value);
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.volume_up_outlined,
+              color: Colors.white,
+            )
+          ],
+        ),
+      ],
     );
   }
 }
