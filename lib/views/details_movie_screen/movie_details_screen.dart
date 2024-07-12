@@ -3,7 +3,7 @@ import 'package:fleymovieapp/views/details_movie_screen/build_details_movie.dart
 import 'package:fleymovieapp/views/details_movie_screen/build_episode.dart';
 import 'package:fleymovieapp/views/details_movie_screen/build_poster.dart';
 import 'package:fleymovieapp/view_models/movie_details_screen_view_model.dart';
-import 'package:fleymovieapp/views/details_movie_screen/build_source_movie.dart';
+import 'package:fleymovieapp/views/details_movie_screen/build_episode_current_movie.dart';
 import 'package:fleymovieapp/views/details_movie_screen/build_title_movie.dart';
 import 'package:fleymovieapp/views/details_movie_screen/build_watch_a_movie.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +65,7 @@ class _DetailsMovieScreenState extends State<MovieDetailsScreen> {
 
                           const BuildWatchAMovie(),
 
-                          const BuildSourceMovie(),
+                          BuildEpisodeCurrentMovie(viewModel.movieDetails!),
 
                           BuildEpisode(viewModel.movieDetails!),
 

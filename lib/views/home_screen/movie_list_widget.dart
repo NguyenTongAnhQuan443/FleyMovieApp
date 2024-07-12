@@ -33,7 +33,8 @@ class MovieListWidget extends StatelessWidget {
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
-                                return buildPosterAndTitleMovie(item, context);
+                                return buildPosterAndTitleMovieWaiting(
+                                    item, context);
                               } else {
                                 if (snapshot.hasData && snapshot.data!) {
                                   return buildPosterAndMovieDataTrue(
@@ -92,7 +93,9 @@ class MovieListWidget extends StatelessWidget {
             ),
             onTap: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => MoreMoviesScreen()));
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => MoreMoviesScreen(movie, 1)));
             },
           ),
         ],
@@ -127,7 +130,7 @@ class MovieListWidget extends StatelessWidget {
     );
   }
 
-// Build Poster And Title Movie (Poster error or waiting)
+// Build Poster And Title Movie (Poster error)
   Widget buildPosterAndTitleMovie(Items item, context) {
     return Column(
       children: [
@@ -142,6 +145,28 @@ class MovieListWidget extends StatelessWidget {
             ),
           ),
         ),
+        buildTitleMovie(item),
+      ],
+    );
+  }
+
+  // Build poster and title waiting
+  Widget buildPosterAndTitleMovieWaiting(Items item, context) {
+    return Column(
+      children: [
+        Container(
+            margin: const EdgeInsets.only(right: 10),
+            width: 120,
+            height: 180,
+            child: SizedBox(
+              width: 5,
+              height: 5,
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              ),
+            )),
         buildTitleMovie(item),
       ],
     );

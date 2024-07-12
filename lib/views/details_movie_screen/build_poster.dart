@@ -16,9 +16,14 @@ class BuildPoster extends StatelessWidget {
         width: double.infinity,
         height: 300,
         fit: BoxFit.cover,
-        placeholder: (context, child) => Image.asset(
-          'assets/images/default_poster.jpg',
-          fit: BoxFit.cover,
+        placeholder: (context, url) => const SizedBox(
+          width: 20,
+          height: 20,
+          child: Center(
+            child: CircularProgressIndicator(
+              color: Colors.white,
+            ),
+          ),
         ),
         errorWidget: (context, error, child) => Image.asset(
           'assets/images/default_poster.jpg',

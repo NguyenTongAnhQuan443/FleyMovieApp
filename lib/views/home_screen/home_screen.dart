@@ -43,8 +43,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   Consumer<HomeScreenViewModel>(
                     builder: (context, viewModel, child) {
                       if (viewModel.isLoading) {
-                        return const CircularProgressIndicator(
-                          color: Colors.white,
+                        return const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          ),
                         );
                       } else {
                         return Column(
