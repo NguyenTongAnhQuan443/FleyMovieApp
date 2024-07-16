@@ -1,8 +1,8 @@
 import 'dart:io';
+import 'package:fleymovieapp/models/kkphim/movie.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as json;
 import 'package:flutter/foundation.dart';
-import '../../models/kkphim/movie.dart';
 
 class HomeScreenViewModel extends ChangeNotifier {
   final List<String> sourceMovie = [

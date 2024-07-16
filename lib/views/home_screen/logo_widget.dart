@@ -1,3 +1,4 @@
+import 'package:fleymovieapp/view_models/more_movies_view_model.dart';
 import 'package:flutter/material.dart';
 
 class LogoWidget extends StatelessWidget {
@@ -45,7 +46,12 @@ class LogoWidget extends StatelessWidget {
           Row(
             children: [
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  // MoreMoviesViewModel m = MoreMoviesViewModel();
+                  // await m.fetchMovies('phim-le', 1);
+                  // print(m.itemsMovie[1].posterUrl);
+                },
+
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(50, 32),
                   foregroundColor: Colors.white,

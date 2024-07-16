@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:fleymovieapp/views/more_movies_screen/more_movies.dart';
+import 'package:fleymovieapp/views/more_movies_screen/more_movies_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import Provider package
 import '../../models/kkphim/movie.dart';
@@ -19,7 +19,7 @@ class MovieListWidget extends StatelessWidget {
           margin: const EdgeInsets.only(top: 10, left: 8),
           child: Column(
             children: [
-              buildTitlePage(context),
+              buildTitlePage(context, movie.data!.typeList),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -69,7 +69,7 @@ class MovieListWidget extends StatelessWidget {
   }
 
   // Build Title Page
-  Widget buildTitlePage(context) {
+  Widget buildTitlePage(context, String? typeList) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       child: Row(
@@ -95,7 +95,7 @@ class MovieListWidget extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => MoreMoviesScreen(movie, 1)));
+                      builder: (_) => MoreMoviesScreen('${typeList}', 1)));
             },
           ),
         ],
@@ -158,7 +158,7 @@ class MovieListWidget extends StatelessWidget {
             margin: const EdgeInsets.only(right: 10),
             width: 120,
             height: 180,
-            child: SizedBox(
+            child: const SizedBox(
               width: 5,
               height: 5,
               child: Center(
