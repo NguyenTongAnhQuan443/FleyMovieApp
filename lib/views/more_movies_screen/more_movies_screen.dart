@@ -1,10 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fleymovieapp/view_models/more_movies_view_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../models/kkphim/movie.dart';
+import '../details_movie_screen/movie_details_screen.dart';
 
 class MoreMoviesScreen extends StatefulWidget {
   String typeList;
@@ -19,9 +18,14 @@ class MoreMoviesScreen extends StatefulWidget {
 }
 
 class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
+  late ScrollController _scrollController;
+  int _currentPage = 1;
+
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context
           .read<MoreMoviesViewModel>()
@@ -30,13 +34,37 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent) {
+      _loadMoreMovies();
+    }
+  }
+
+  void _loadMoreMovies() {
+    if (!context.read<MoreMoviesViewModel>().isLoading) {
+      _currentPage++;
+      context
+          .read<MoreMoviesViewModel>()
+          .fetchMovies(widget.typeList, _currentPage, isLoadMore: true);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    var orientation = MediaQuery.of(context).orientation;
+    int crossAxisCount = orientation == Orientation.portrait ? 3 : 5;
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Column(
           children: [
-            // Khám phá
             Row(
               children: [
                 IconButton(
@@ -58,11 +86,9 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
                 ),
               ],
             ),
-            // Tìm kiếm
             Container(
               height: 40,
-              margin: const EdgeInsets.only(
-                  left: 10, right: 10, top: 10, bottom: 30),
+              margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
               child: TextField(
                 decoration: InputDecoration(
                   prefixIcon: Icon(
@@ -81,25 +107,25 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
                 ),
               ),
             ),
-            // build phim container
             Expanded(
               child: Consumer<MoreMoviesViewModel>(
                 builder: (context, viewModel, child) {
-                  if (viewModel.isLoading) {
+                  if (viewModel.isLoading && viewModel.moviesList.isEmpty) {
                     return buildLoading();
-                  } else if (viewModel.movie != null) {
+                  } else if (viewModel.moviesList.isNotEmpty) {
                     return GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 5,
+                        controller: _scrollController,
+                        padding:
+                            const EdgeInsets.only(left: 10, right: 10, top: 20),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: crossAxisCount,
                           mainAxisSpacing: 10,
                           crossAxisSpacing: 10,
                           childAspectRatio: 0.5,
                         ),
-                        itemCount: viewModel.movie!.data!.items!.length,
+                        itemCount: viewModel.moviesList.length,
                         itemBuilder: (context, index) {
-                          final url =
-                              viewModel.movie!.data!.items![index].posterUrl;
+                          final url = viewModel.moviesList[index].posterUrl;
 
                           final appDomainCdnImage =
                               viewModel.movie!.data!.appDomainCdnImage;
@@ -109,12 +135,11 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
                           return Column(
                             children: [
                               Flexible(
-                                child: Container(
-                                  // margin: const EdgeInsets.only(right: 10),
+                                child: SizedBox(
                                   width: double.infinity,
                                   height: double.infinity,
                                   child: ClipRRect(
-                                    // borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(10),
                                     child: CachedNetworkImage(
                                       imageUrl: posterUrl,
                                       imageBuilder: (context, imageProvider) =>
@@ -126,20 +151,28 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
                                           ),
                                         ),
                                       ),
-                                      // errorWidget: (context, url, error) =>
-                                      //     buildPosterAndTitleMovie(item, context),
+                                      errorWidget: (context, url, error) =>
+                                          Container(
+                                        decoration: const BoxDecoration(
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                                'assets/images/default_poster.jpg'),
+                                            // Đường dẫn đến ảnh mặc định
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                              buildTitleMovie(
-                                  viewModel.movie!.data!.items![index]),
+                              buildTitleMovie(viewModel.moviesList[index]),
                             ],
                           );
                         });
                   } else {
                     return const Center(
-                        child: Text('Không tìm thấy phim',
+                        child: Text('Không tìm thấy phim, vui lòng thử lại sau',
                             style: TextStyle(color: Colors.white)));
                   }
                 },
@@ -180,6 +213,34 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
           color: Colors.white,
         ),
       ),
+    );
+  }
+
+  // Build Poster And Title Movie (Poster error)
+  Widget buildPosterAndTitleMovie(Items item, context) {
+    return Column(
+      children: [
+        Container(
+          margin: const EdgeInsets.only(right: 10),
+          width: 120,
+          height: 180,
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: buildImageDefault(),
+            ),
+          ),
+        ),
+        buildTitleMovie(item),
+      ],
+    );
+  }
+
+  // Widget Image Default
+  Widget buildImageDefault() {
+    return Image.asset(
+      'assets/images/default_poster.jpg',
+      fit: BoxFit.cover,
     );
   }
 }

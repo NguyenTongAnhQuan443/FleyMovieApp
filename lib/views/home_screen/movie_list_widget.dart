@@ -95,7 +95,7 @@ class MovieListWidget extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => MoreMoviesScreen('${typeList}', 1)));
+                      builder: (_) => MoreMoviesScreen('$typeList', 1)));
             },
           ),
         ],
