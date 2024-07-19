@@ -140,25 +140,37 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
                                   height: double.infinity,
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
-                                    child: CachedNetworkImage(
-                                      imageUrl: posterUrl,
-                                      imageBuilder: (context, imageProvider) =>
-                                          Container(
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: imageProvider,
-                                            fit: BoxFit.cover,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                MovieDetailsScreen(viewModel.moviesList[index].slug!),
+                                          ),
+                                        );
+                                      },
+                                      child: CachedNetworkImage(
+                                        imageUrl: posterUrl,
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                Container(
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          Container(
-                                        decoration: const BoxDecoration(
-                                          image: DecorationImage(
-                                            image: AssetImage(
-                                                'assets/images/default_poster.jpg'),
-                                            // Đường dẫn đến ảnh mặc định
-                                            fit: BoxFit.cover,
+                                        errorWidget: (context, url, error) =>
+                                            Container(
+                                          decoration: const BoxDecoration(
+                                            image: DecorationImage(
+                                              image: AssetImage(
+                                                  'assets/images/default_poster.jpg'),
+                                              // Đường dẫn đến ảnh mặc định
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -166,7 +178,8 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
                                   ),
                                 ),
                               ),
-                              buildTitleMovie(viewModel.moviesList[index]),
+                              buildTitleMovie(
+                                  viewModel.moviesList[index] as Items),
                             ],
                           );
                         });

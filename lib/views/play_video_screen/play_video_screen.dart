@@ -147,21 +147,21 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
             Center(
               child: _controller.value.isInitialized
                   ? Stack(
-                alignment: Alignment.bottomCenter,
-                children: [
-                  AspectRatio(
-                    aspectRatio: orientation == Orientation.portrait
-                        ? 16 / 9
-                        : screenWidth / screenHeight,
-                    child: VideoPlayer(_controller),
-                  ),
-                  if (_showControls && !_lockScreen) buildDuration(),
-                  if (_showControls && !_lockScreen) buildProgressVideo(),
-                ],
-              )
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        AspectRatio(
+                          aspectRatio: orientation == Orientation.portrait
+                              ? 16 / 9
+                              : screenWidth / screenHeight,
+                          child: VideoPlayer(_controller),
+                        ),
+                        if (_showControls && !_lockScreen) buildDuration(),
+                        if (_showControls && !_lockScreen) buildProgressVideo(),
+                      ],
+                    )
                   : const CircularProgressIndicator(
-                color: Colors.white,
-              ),
+                      color: Colors.white,
+                    ),
             ),
             if (_showControls && !_lockScreen) buildIconBack(),
             if (_showControls && !_lockScreen) buildReplayPauseforwardVideo(),
@@ -209,18 +209,22 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                IconButton(
-                  onPressed: () {
-                    _replayVideo();
-                  },
-                  icon: const Icon(
-                    Icons.replay_10,
-                    color: Colors.white,
-                    size: 40,
+                Flexible(
+                  child: Center(
+                    child: IconButton(
+                      onPressed: () {
+                        _replayVideo();
+                      },
+                      icon: const Icon(
+                        Icons.replay_10,
+                        color: Colors.white,
+                        size: 40,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(
-                  width: 180,
+                  width: 100,
                 ),
                 IconButton(
                   onPressed: _togglePlayPause,
@@ -233,16 +237,20 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
                   ),
                 ),
                 const SizedBox(
-                  width: 180,
+                  width: 100,
                 ),
-                IconButton(
-                  onPressed: () {
-                    _forwardVideo();
-                  },
-                  icon: const Icon(
-                    Icons.forward_10,
-                    color: Colors.white,
-                    size: 40,
+                Flexible(
+                  child: Center(
+                    child: IconButton(
+                      onPressed: () {
+                        _forwardVideo();
+                      },
+                      icon: const Icon(
+                        Icons.forward_10,
+                        color: Colors.white,
+                        size: 40,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -332,9 +340,9 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
                   data: SliderTheme.of(context).copyWith(
                     trackHeight: 2.0, // Độ mỏng của thanh trượt
                     thumbShape:
-                    const RoundSliderThumbShape(enabledThumbRadius: 5.0),
+                        const RoundSliderThumbShape(enabledThumbRadius: 5.0),
                     overlayShape:
-                    const RoundSliderOverlayShape(overlayRadius: 24.0),
+                        const RoundSliderOverlayShape(overlayRadius: 24.0),
                   ),
                   child: Slider(
                     activeColor: Colors.red,
@@ -378,9 +386,9 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
                   data: SliderTheme.of(context).copyWith(
                     trackHeight: 2.0, // Độ mỏng của thanh trượt
                     thumbShape:
-                    const RoundSliderThumbShape(enabledThumbRadius: 5.0),
+                        const RoundSliderThumbShape(enabledThumbRadius: 5.0),
                     overlayShape:
-                    const RoundSliderOverlayShape(overlayRadius: 24.0),
+                        const RoundSliderOverlayShape(overlayRadius: 24.0),
                   ),
                   child: Slider(
                     activeColor: Colors.red,
