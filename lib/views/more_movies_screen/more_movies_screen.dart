@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fleymovieapp/view_models/more_movies_view_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/kkphim/movie.dart';
@@ -65,135 +66,163 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                  ),
-                ),
-                const Text(
-                  'Khám phá',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              height: 40,
-              margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
-              child: TextField(
-                decoration: InputDecoration(
-                  prefixIcon: Icon(
-                    Icons.search_outlined,
-                    color: Colors.white.withOpacity(0.5),
-                  ),
-                  hintText: 'Nhập tên phim cần tìm ...',
-                  hintStyle: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey.withOpacity(0.3),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Consumer<MoreMoviesViewModel>(
-                builder: (context, viewModel, child) {
-                  if (viewModel.isLoading && viewModel.moviesList.isEmpty) {
-                    return buildLoading();
-                  } else if (viewModel.moviesList.isNotEmpty) {
-                    return GridView.builder(
-                        controller: _scrollController,
-                        padding:
-                            const EdgeInsets.only(left: 10, right: 10, top: 20),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: crossAxisCount,
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
-                          childAspectRatio: 0.5,
-                        ),
-                        itemCount: viewModel.moviesList.length,
-                        itemBuilder: (context, index) {
-                          final url = viewModel.moviesList[index].posterUrl;
-
-                          final appDomainCdnImage =
-                              viewModel.movie!.data!.appDomainCdnImage;
-
-                          final posterUrl = '${appDomainCdnImage!}/${url!}';
-
-                          return Column(
-                            children: [
-                              Flexible(
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                MovieDetailsScreen(viewModel.moviesList[index].slug!),
-                                          ),
-                                        );
-                                      },
-                                      child: CachedNetworkImage(
-                                        imageUrl: posterUrl,
-                                        imageBuilder:
-                                            (context, imageProvider) =>
-                                                Container(
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: imageProvider,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            Container(
-                                          decoration: const BoxDecoration(
-                                            image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/images/default_poster.jpg'),
-                                              // Đường dẫn đến ảnh mặc định
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              buildTitleMovie(
-                                  viewModel.moviesList[index] as Items),
-                            ],
-                          );
-                        });
-                  } else {
-                    return const Center(
-                        child: Text('Không tìm thấy phim, vui lòng thử lại sau',
-                            style: TextStyle(color: Colors.white)));
-                  }
-                },
-              ),
-            ),
+            buildHeader(),
+            buildFunctionSearch(),
+            buildMoreMovie(crossAxisCount),
           ],
         ),
       ),
+    );
+  }
+
+  // build header
+  Widget buildHeader() {
+    return Row(
+      children: [
+        IconButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+        ),
+        const Text(
+          'Khám phá',
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // build function search
+  Widget buildFunctionSearch() {
+    return Container(
+      height: 40,
+      margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
+      child: TextField(
+        decoration: InputDecoration(
+          prefixIcon: Icon(
+            Icons.search_outlined,
+            color: Colors.white.withOpacity(0.5),
+          ),
+          hintText: 'Nhập tên phim cần tìm ...',
+          hintStyle: TextStyle(
+            color: Colors.white.withOpacity(0.5),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          filled: true,
+          fillColor: Colors.grey.withOpacity(0.3),
+        ),
+      ),
+    );
+  }
+
+  // build more movie
+  Widget buildMoreMovie(int crossAxisCount) {
+    return Expanded(
+      child: Consumer<MoreMoviesViewModel>(
+        builder: (context, viewModel, child) {
+          if (viewModel.isLoading && viewModel.moviesList.isEmpty) {
+            return buildLoading();
+          } else if (viewModel.moviesList.isNotEmpty) {
+            return GridView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 0.5,
+                ),
+                itemCount: viewModel.moviesList.length,
+                itemBuilder: (context, index) {
+                  final appDomainCdnImage =
+                      viewModel.movie!.data!.appDomainCdnImage;
+
+                  final poster = viewModel.moviesList[index].posterUrl;
+                  final thumb = viewModel.moviesList[index].thumbUrl;
+
+                  final posterUrl = '${appDomainCdnImage!}/${poster!}';
+                  final thumbUrl = '${appDomainCdnImage!}/${thumb!}';
+
+                  return FutureBuilder<bool>(
+                      future: viewModel.checkImageUrl(posterUrl),
+                      builder:
+                          (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                        if (snapshot.hasError) {
+                          return buildImageDefault();
+                        } else {
+                          if (snapshot.hasData) {
+                            if (snapshot.data!) {
+                              return buildItemMovie(
+                                  viewModel, index, posterUrl, thumbUrl, true);
+                            } else {
+                              return buildItemMovie(
+                                  viewModel, index, posterUrl, thumbUrl, false);
+                            }
+                          } else {
+                            return buildLoading();
+                          }
+                        }
+                      });
+                });
+          } else {
+            return const Center(
+                child: Text('Không tìm thấy phim, vui lòng thử lại sau',
+                    style: TextStyle(color: Colors.white)));
+          }
+        },
+      ),
+    );
+  }
+
+  // build Item Movie (true => poster, false => thumb)
+  Widget buildItemMovie(MoreMoviesViewModel viewModel, int indexImagePoster,
+      String posterUrl, String thumbUrl, bool boolPoster) {
+    return Column(
+      children: [
+        Flexible(
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MovieDetailsScreen(
+                          viewModel.moviesList[indexImagePoster].slug!),
+                    ),
+                  );
+                },
+                child: CachedNetworkImage(
+                  imageUrl: boolPoster ? posterUrl : thumbUrl,
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  placeholder: (context, url) => buildLoading(),
+                ),
+              ),
+            ),
+          ),
+        ),
+        buildTitleMovie(viewModel.moviesList[indexImagePoster] as Items),
+      ],
     );
   }
 
@@ -226,26 +255,6 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
           color: Colors.white,
         ),
       ),
-    );
-  }
-
-  // Build Poster And Title Movie (Poster error)
-  Widget buildPosterAndTitleMovie(Items item, context) {
-    return Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.only(right: 10),
-          width: 120,
-          height: 180,
-          child: Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: buildImageDefault(),
-            ),
-          ),
-        ),
-        buildTitleMovie(item),
-      ],
     );
   }
 

@@ -30,7 +30,8 @@ class MovieListWidget extends StatelessWidget {
                         return InkWell(
                           child: FutureBuilder<bool>(
                             future: viewModel.checkImageUrl(posterUrl),
-                            builder: (context, snapshot) {
+                            builder: (context, snapshot)
+                            {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
                                 return buildPosterAndTitleMovieWaiting(

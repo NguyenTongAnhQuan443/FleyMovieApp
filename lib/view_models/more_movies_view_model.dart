@@ -16,7 +16,8 @@ class MoreMoviesViewModel extends ChangeNotifier {
 
   List<Items> get moviesList => _moviesList;
 
-  Future<void> fetchMovies(String movieType, int page, {bool isLoadMore = false}) async {
+  Future<void> fetchMovies(String movieType, int page,
+      {bool isLoadMore = false}) async {
     try {
       _isLoading = true;
       notifyListeners();
@@ -48,31 +49,22 @@ class MoreMoviesViewModel extends ChangeNotifier {
   }
 
   Future<bool> checkImageUrl(String imageUrl) async {
-    HttpClient client = HttpClient();
     try {
-      HttpClientRequest request = await client.getUrl(Uri.parse(imageUrl));
-      HttpClientResponse response = await request.close();
+      final response = await http.get(Uri.parse(imageUrl));
 
       if (response.statusCode == HttpStatus.ok) {
-        List<int> bytes = await consolidateHttpClientResponseBytes(response);
-        if (_isImage(bytes)) {
-          return true;
-        } else {
-          return false;
-        }
+        final bytes = response.bodyBytes;
+        return isImage(bytes);
       } else {
         return false;
       }
     } catch (e) {
       return false;
-    } finally {
-      client.close();
     }
   }
 
-  bool _isImage(List<int> bytes) {
+  bool isImage(List<int> bytes) {
     if (bytes.length < 4) return false;
     return true;
   }
 }
-
