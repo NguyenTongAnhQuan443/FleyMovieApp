@@ -1,5 +1,6 @@
 import 'package:fleymovieapp/view_models/home_screen_view_model.dart';
 import 'package:fleymovieapp/view_models/more_movies_view_model.dart';
+import 'package:fleymovieapp/view_models/new_movie_view_model.dart';
 import 'package:fleymovieapp/views/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,7 @@ class FleyMovieApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => HomeScreenViewModel()),
         ChangeNotifierProvider(create: (context) => MoreMoviesViewModel()),
+        ChangeNotifierProvider(create: (context) => NewMovieViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

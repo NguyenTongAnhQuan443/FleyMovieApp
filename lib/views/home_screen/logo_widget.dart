@@ -1,4 +1,5 @@
 import 'package:fleymovieapp/view_models/more_movies_view_model.dart';
+import 'package:fleymovieapp/view_models/new_movie_view_model.dart';
 import 'package:flutter/material.dart';
 
 class LogoWidget extends StatelessWidget {
@@ -50,6 +51,10 @@ class LogoWidget extends StatelessWidget {
                   // MoreMoviesViewModel m = MoreMoviesViewModel();
                   // await m.fetchMovies('phim-le', 1);
                   // print(m.itemsMovie[1].posterUrl);
+
+                  NewMovieViewModel n = NewMovieViewModel();
+                  await n.fetchMovies();
+                  // print(n.newMovie!.getFirstFivePosterUrls());
                 },
 
                 style: ElevatedButton.styleFrom(

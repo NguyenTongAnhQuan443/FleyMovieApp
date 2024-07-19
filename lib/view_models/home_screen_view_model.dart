@@ -11,21 +11,17 @@ class HomeScreenViewModel extends ChangeNotifier {
     'Mọt Phim',
     'Chill Hay'
   ];
-  final List<String> imageBannerUrls = [
-    'https://cinema.momocdn.net/img/51864595072123353-wEXCCYzbslBJoym4aeiIV2V7cGz.jpg',
-    'https://static2.vieon.vn/vieplay-image/poster_v4/2022/08/25/0snqk97o_660x946-tiemcapheluat.jpg',
-    'https://images2.thanhnien.vn/528068263637045248/2024/2/20/special-poster-2-mai-17084211313531000860296.jpg',
-  ];
-
-  List<String> getImageBannerUrls() => imageBannerUrls;
 
   List<String> getSourceMovie() => sourceMovie;
 
+  Movie? _newMovie;
   Movie? _singleMovie;
   Movie? _seriesMovie;
   Movie? _cartoonMovie;
   Movie? _tiviShows;
   bool _isLoading = false;
+
+  Movie? get newMovie => _newMovie;
 
   Movie? get singleMovie => _singleMovie;
 
@@ -43,17 +39,20 @@ class HomeScreenViewModel extends ChangeNotifier {
       notifyListeners();
 
       final result = await Future.wait([
-        fetchMovie('phim-le', 1),
-        fetchMovie('phim-bo', 1),
-        fetchMovie('hoat-hinh', 1),
-        fetchMovie('tv-shows', 1)
+        fetchMovie('danh-sach/phim-moi-cap-nhat', 1),
+        fetchMovie('v1/api/danh-sach/phim-le', 1),
+        fetchMovie('v1/api/danh-sach/phim-bo', 1),
+        fetchMovie('v1/api/danh-sach/hoat-hinh', 1),
+        fetchMovie('v1/api/danh-sach/tv-shows', 1)
       ]);
 
-      _singleMovie = result[0];
-      _seriesMovie = result[1];
-      _cartoonMovie = result[2];
-      _tiviShows = result[3];
+      _newMovie = result[0];
+      _singleMovie = result[1];
+      _seriesMovie = result[2];
+      _cartoonMovie = result[3];
+      _tiviShows = result[4];
     } catch (e) {
+      _newMovie = null;
       _singleMovie = null;
       _seriesMovie = null;
       _cartoonMovie = null;
@@ -66,8 +65,8 @@ class HomeScreenViewModel extends ChangeNotifier {
 
   Future<Movie?> fetchMovie(String movieType, int page) async {
     try {
-      final response = await http.get(Uri.parse(
-          'https://phimapi.com/v1/api/danh-sach/$movieType?page=$page'));
+      final response = await http
+          .get(Uri.parse('https://phimapi.com/$movieType?page=$page'));
 
       if (response.statusCode == 200) {
         Movie movie = Movie.fromJson(json.jsonDecode(response.body));

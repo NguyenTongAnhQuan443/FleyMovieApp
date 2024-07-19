@@ -1,7 +1,9 @@
+import 'package:fleymovieapp/view_models/new_movie_view_model.dart';
 import 'package:fleymovieapp/views/home_screen/banner_movie_widget.dart';
 import 'package:fleymovieapp/views/home_screen/movie_list_widget.dart';
 import 'package:fleymovieapp/views/home_screen/logo_widget.dart';
 import 'package:fleymovieapp/views/home_screen/source_list_modal.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fleymovieapp/view_models/home_screen_view_model.dart';
 import 'package:provider/provider.dart';
@@ -34,10 +36,31 @@ class _HomeScreenState extends State<HomeScreen> {
               scrollDirection: Axis.vertical,
               child: Column(
                 children: [
-                  const Stack(
+                  Stack(
                     children: [
-                      BannerMovieWidget(),
-                      LogoWidget(),
+                      const BannerMovieWidget(),
+                      const LogoWidget(),
+                      Positioned(
+                        bottom: 30,
+                        left: MediaQuery.of(context).size.width / 2 - 100,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            minimumSize: const Size(200, 50),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Icon(Icons.play_arrow),
+                              Text('Xem phim'),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   Consumer<HomeScreenViewModel>(

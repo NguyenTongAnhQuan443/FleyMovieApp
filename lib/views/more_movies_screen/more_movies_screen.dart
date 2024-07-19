@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fleymovieapp/view_models/more_movies_view_model.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:fleymovieapp/views/more_movies_screen/build_function_search.dart';
+import 'package:fleymovieapp/views/more_movies_screen/build_header.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/kkphim/movie.dart';
@@ -66,60 +67,10 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            buildHeader(),
-            buildFunctionSearch(),
+            BuildHeader(),
+            BuildFunctionSearch(),
             buildMoreMovie(crossAxisCount),
           ],
-        ),
-      ),
-    );
-  }
-
-  // build header
-  Widget buildHeader() {
-    return Row(
-      children: [
-        IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
-        ),
-        const Text(
-          'Khám phá',
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    );
-  }
-
-  // build function search
-  Widget buildFunctionSearch() {
-    return Container(
-      height: 40,
-      margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
-      child: TextField(
-        decoration: InputDecoration(
-          prefixIcon: Icon(
-            Icons.search_outlined,
-            color: Colors.white.withOpacity(0.5),
-          ),
-          hintText: 'Nhập tên phim cần tìm ...',
-          hintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.5),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          filled: true,
-          fillColor: Colors.grey.withOpacity(0.3),
         ),
       ),
     );
@@ -151,7 +102,7 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
                   final thumb = viewModel.moviesList[index].thumbUrl;
 
                   final posterUrl = '${appDomainCdnImage!}/${poster!}';
-                  final thumbUrl = '${appDomainCdnImage!}/${thumb!}';
+                  final thumbUrl = '$appDomainCdnImage/${thumb!}';
 
                   return FutureBuilder<bool>(
                       future: viewModel.checkImageUrl(posterUrl),
