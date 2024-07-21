@@ -1,3 +1,4 @@
+import 'package:fleymovieapp/views/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +31,8 @@ class _SplashScreenState extends State<SplashScreen> {
         await viewModel.fetchMovies();
         if (!viewModel.isLoading) {
           Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()));
+              // MaterialPageRoute(builder: (context) => const HomeScreen()));
+              MaterialPageRoute(builder: (context) => Home()));
         }
       },
     );
