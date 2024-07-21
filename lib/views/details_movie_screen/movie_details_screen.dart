@@ -1,6 +1,7 @@
 import 'package:fleymovieapp/views/details_movie_screen/build_category_movie.dart';
 import 'package:fleymovieapp/views/details_movie_screen/build_details_movie.dart';
 import 'package:fleymovieapp/views/details_movie_screen/build_episode.dart';
+import 'package:fleymovieapp/views/details_movie_screen/build_movie_error.dart';
 import 'package:fleymovieapp/views/details_movie_screen/build_poster.dart';
 import 'package:fleymovieapp/view_models/movie_details_screen_view_model.dart';
 import 'package:fleymovieapp/views/details_movie_screen/build_episode_current_movie.dart';
@@ -39,7 +40,8 @@ class _DetailsMovieScreenState extends State<MovieDetailsScreen> {
                     child: CircularProgressIndicator(
                   color: Colors.white,
                 ));
-              } else if (viewModel.movieDetails != null) {
+              } else if (viewModel.movieDetails != null &&
+                  viewModel.movieDetails!.status != false) {
                 return Stack(
                   children: [
                     SingleChildScrollView(
@@ -77,11 +79,12 @@ class _DetailsMovieScreenState extends State<MovieDetailsScreen> {
                   ],
                 );
               } else {
-                return const Center(
-                  child: Text(
-                    'Chúng mình đang cố gắng khắc phục\nbạn hãy quay lại thử lại sau nhé <3',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                return Stack(
+                  children: [
+                   BuildMovieError(),
+                    onTapArrowBack(),
+                  ],
+
                 );
               }
             },

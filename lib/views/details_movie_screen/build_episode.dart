@@ -27,7 +27,7 @@ class BuildEpisode extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
-            '${movieDetails.movie!.quality} - Danh sách tập',
+            '${movieDetails.movie?.quality ?? ''} - Danh sách tập',
             style: const TextStyle(color: Colors.red, fontSize: 14),
           ),
         ],

@@ -2,24 +2,28 @@ import 'package:fleymovieapp/models/kkphim/movie_details.dart';
 import 'package:flutter/material.dart';
 
 class BuildDetailsMovie extends StatelessWidget {
-  MovieDetails movieDetails;
+  final MovieDetails movieDetails;
 
-  BuildDetailsMovie(this.movieDetails, {super.key});
+  const BuildDetailsMovie(this.movieDetails, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    final actor1 = movieDetails.movie!.actor!.isNotEmpty
-        ? movieDetails.movie!.actor![0]
-        : '';
-    final actor2 = movieDetails.movie!.actor!.length > 1
-        ? movieDetails.movie!.actor![1]
-        : '';
-    final actor3 = movieDetails.movie!.actor!.length > 2
-        ? movieDetails.movie!.actor![2]
-        : '';
-    final actor4 = movieDetails.movie!.actor!.length > 3
-        ? movieDetails.movie!.actor![3]
-        : '';
+    final movie = movieDetails.movie;
+    if (movie == null) {
+      return Container(
+        margin: const EdgeInsets.only(left: 10),
+        child: const Text(
+          'Thông tin phim không có sẵn',
+          style: TextStyle(color: Colors.red, fontSize: 16),
+        ),
+      );
+    }
+
+    final actor1 = movie.actor != null && movie.actor!.isNotEmpty ? movie.actor![0] : '';
+    final actor2 = movie.actor != null && movie.actor!.length > 1 ? movie.actor![1] : '';
+    final actor3 = movie.actor != null && movie.actor!.length > 2 ? movie.actor![2] : '';
+    final actor4 = movie.actor != null && movie.actor!.length > 3 ? movie.actor![3] : '';
+
     return Container(
       margin: const EdgeInsets.only(left: 10),
       child: Column(
@@ -41,7 +45,7 @@ class BuildDetailsMovie extends StatelessWidget {
             ),
           ),
           Text(
-            movieDetails.movie!.content ?? '',
+            movie.content ?? '',
             style: const TextStyle(
               color: Colors.grey,
               fontWeight: FontWeight.w400,
@@ -53,7 +57,7 @@ class BuildDetailsMovie extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(top: 10),
             child: Text(
-              'Đạo diễn: ${movieDetails.movie!.director}',
+              'Đạo diễn: ${movie.director ?? 'N/A'}',
               style: const TextStyle(
                 color: Colors.grey,
                 fontWeight: FontWeight.w400,

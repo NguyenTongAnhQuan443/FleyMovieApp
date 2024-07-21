@@ -16,11 +16,11 @@ class MovieDetailsScreenViewModel with ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final reponse = await http.get(Uri.parse('https://phimapi.com/phim/$slug'));
+    final response = await http.get(Uri.parse('https://phimapi.com/phim/$slug'));
     _isLoading = false;
 
-    if (reponse.statusCode == 200) {
-      final jsonBody = reponse.body;
+    if (response.statusCode == 200) {
+      final jsonBody = response.body;
       if (jsonBody != null) {
         final jsonData = json.decode(jsonBody);
         _movieDetails = MovieDetails.fromJson(jsonData);
