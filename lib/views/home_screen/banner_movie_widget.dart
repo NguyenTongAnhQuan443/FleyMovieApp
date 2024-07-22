@@ -3,8 +3,6 @@ import 'package:fleymovieapp/view_models/slug_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
-import '../../view_models/home_screen_view_model.dart';
-
 class BannerMovieWidget extends StatefulWidget {
   const BannerMovieWidget({super.key});
 

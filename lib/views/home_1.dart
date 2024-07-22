@@ -1,5 +1,5 @@
-import 'package:fleymovieapp/page/chat.dart';
 import 'package:fleymovieapp/page/setting.dart';
+import 'package:fleymovieapp/views/find_movies_screen/find_movies_screen.dart';
 import 'package:fleymovieapp/views/home_screen/home_screen.dart';
 import 'package:fleymovieapp/views/profile_screen/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,7 +15,7 @@ class Home1 extends StatefulWidget {
 
 class _Home1State extends State<Home1> {
   int _pageIndex = 0;
-  final List<Widget> _page = [const HomeScreen(), Chat(), Setting(), ProfileScreen()];
+  final List<Widget> _page = [const HomeScreen(), FindMoviesScreen(), Setting(), ProfileScreen()];
 
   @override
   Widget build(BuildContext context) {

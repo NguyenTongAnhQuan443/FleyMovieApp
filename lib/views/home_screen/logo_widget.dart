@@ -47,16 +47,7 @@ class LogoWidget extends StatelessWidget {
           Row(
             children: [
               ElevatedButton(
-                onPressed: () async {
-                  // MoreMoviesViewModel m = MoreMoviesViewModel();
-                  // await m.fetchMovies('phim-le', 1);
-                  // print(m.itemsMovie[1].posterUrl);
-
-                  NewMovieViewModel n = NewMovieViewModel();
-                  await n.fetchMovies();
-                  // print(n.newMovie!.getFirstFivePosterUrls());
-                },
-
+                onPressed: () async {},
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(50, 32),
                   foregroundColor: Colors.white,
@@ -67,14 +58,14 @@ class LogoWidget extends StatelessWidget {
                 ),
                 child: const Text('Premium'),
               ),
-              Container(
-                margin: const EdgeInsets.only(left: 10),
-                child: const Icon(
-                  Icons.menu,
-                  size: 28,
-                  color: Colors.white,
-                ),
-              ),
+              // Container(
+              //   margin: const EdgeInsets.only(left: 10),
+              //   child: const Icon(
+              //     Icons.menu,
+              //     size: 28,
+              //     color: Colors.white,
+              //   ),
+              // ),
             ],
           ),
         ],

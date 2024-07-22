@@ -1,8 +1,9 @@
-import 'package:fleymovieapp/page/chat.dart';
 import 'package:fleymovieapp/views/profile_screen/profile_screen.dart';
 import 'package:fleymovieapp/page/setting.dart';
 import 'package:fleymovieapp/views/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
+
+import 'find_movies_screen/find_movies_screen.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -13,7 +14,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int currentTab = 0;
-  final List<Widget> screens = [const HomeScreen(), Chat(), ProfileScreen(), const Setting()];
+  final List<Widget> screens = [const HomeScreen(), const FindMoviesScreen(), ProfileScreen(), const Setting()];
 
   final PageStorageBucket bucket = PageStorageBucket();
   Widget currentScreen = const HomeScreen();

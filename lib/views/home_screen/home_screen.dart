@@ -93,10 +93,10 @@ class _HomeScreenState extends State<HomeScreen> {
     AlertDialog alert = AlertDialog(
       backgroundColor: Colors.grey,
       title: const Text("Thông báo"),
-      content: Container(
+      content: const SizedBox(
           width: 200,
           height: 30,
-          child: const Text("Vui lòng đợi trong giây lát")),
+          child: Text("Vui lòng đợi trong giây lát")),
       actions: [
         cancelButton,
       ],
@@ -124,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
               : Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MovieDetailsScreen('$slug'),
+                    builder: (context) => MovieDetailsScreen(slug),
                   ),
                 );
         },

@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fleymovieapp/view_models/more_movies_view_model.dart';
-import 'package:fleymovieapp/views/more_movies_screen/build_function_search.dart';
 import 'package:fleymovieapp/views/more_movies_screen/build_header.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -67,8 +66,8 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            BuildHeader(),
-            BuildFunctionSearch(),
+            const BuildHeader(),
+            // const BuildFunctionSearch(),
             buildMoreMovie(crossAxisCount),
           ],
         ),
@@ -138,41 +137,62 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
   // build Item Movie (true => poster, false => thumb)
   Widget buildItemMovie(MoreMoviesViewModel viewModel, int indexImagePoster,
       String posterUrl, String thumbUrl, bool boolPoster) {
-    return Column(
+    return Stack(
       children: [
-        Flexible(
-          child: SizedBox(
-            width: double.infinity,
-            height: double.infinity,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MovieDetailsScreen(
-                          viewModel.moviesList[indexImagePoster].slug!),
-                    ),
-                  );
-                },
-                child: CachedNetworkImage(
-                  imageUrl: boolPoster ? posterUrl : thumbUrl,
-                  imageBuilder: (context, imageProvider) => Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.cover,
+        Column(
+          children: [
+            Flexible(
+              child: SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MovieDetailsScreen(
+                              viewModel.moviesList[indexImagePoster].slug!),
+                        ),
+                      );
+                    },
+                    child: CachedNetworkImage(
+                      imageUrl: boolPoster ? posterUrl : thumbUrl,
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
+                      placeholder: (context, url) => buildLoading(),
                     ),
                   ),
-                  placeholder: (context, url) => buildLoading(),
                 ),
               ),
             ),
+            buildTitleMovie(viewModel.moviesList[indexImagePoster]),
+          ],
+        ),
+        Positioned(
+          top: 5,
+          right: 5,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            width: 95,
+            height: 18,
+            child: Center(
+                child: Text(
+              '${viewModel.moviesList[indexImagePoster].quality}-${viewModel.moviesList[indexImagePoster].lang}',
+              style: const TextStyle(color: Colors.white, fontSize: 12),
+            )),
           ),
         ),
-        buildTitleMovie(viewModel.moviesList[indexImagePoster] as Items),
       ],
     );
   }

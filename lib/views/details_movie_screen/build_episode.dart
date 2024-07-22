@@ -7,7 +7,7 @@ import '../play_video_screen/play_video_screen.dart';
 class BuildEpisode extends StatelessWidget {
   MovieDetails movieDetails;
 
-  BuildEpisode(this.movieDetails);
+  BuildEpisode(this.movieDetails, {super.key});
 
   @override
   Widget build(BuildContext context) {

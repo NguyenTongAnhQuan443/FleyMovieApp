@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +22,6 @@ class ProfileScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(height: 20),
             Center(
               child: Container(
                 width: 130,
@@ -41,6 +41,90 @@ class ProfileScreen extends StatelessWidget {
             const Text(
               'Miễn phí',
               style: TextStyle(color: Colors.white, fontSize: 14),
+            ),
+            const Divider(color: Colors.white),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 16.0, top: 10, bottom: 10),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.person,
+                            color: Colors.white,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 16.0),
+                            child: Text(
+                              'Người dùng:',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 16.0, top: 10, bottom: 10),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_month,
+                            color: Colors.white,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 16.0),
+                            child: Text(
+                              'Hạn sử dụng:',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 10, bottom: 10),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 16.0),
+                            child: Text(
+                              'Nguyễn Tống Anh Quân',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10, bottom: 10),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 16.0),
+                            child: Text(
+                              'Vĩnh viễn',
+                              style:
+                                  TextStyle(color: Colors.red, fontSize: 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
             const Divider(color: Colors.white),
             Expanded(
@@ -145,7 +229,7 @@ class ProfileScreen extends StatelessWidget {
 // Show Alert
 void showAlertDialog(BuildContext context, String title, String content) {
   Widget cancelButton = TextButton(
-    child: Text(
+    child: const Text(
       "OK",
       style: TextStyle(color: Colors.white),
     ),
@@ -158,7 +242,7 @@ void showAlertDialog(BuildContext context, String title, String content) {
     backgroundColor: Colors.black,
     title: Text(
       title,
-      style: TextStyle(color: Colors.white),
+      style: const TextStyle(color: Colors.white),
     ),
     content: SizedBox(
       height: content.length < 100 ? 40 : 500,
@@ -166,7 +250,7 @@ void showAlertDialog(BuildContext context, String title, String content) {
         children: [
           Text(
             content,
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
         ],
       ),

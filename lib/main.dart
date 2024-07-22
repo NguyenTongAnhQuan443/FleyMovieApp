@@ -1,3 +1,4 @@
+import 'package:fleymovieapp/view_models/find_movies_view_model.dart';
 import 'package:fleymovieapp/view_models/home_screen_view_model.dart';
 import 'package:fleymovieapp/view_models/more_movies_view_model.dart';
 import 'package:fleymovieapp/view_models/new_movie_view_model.dart';
@@ -5,7 +6,6 @@ import 'package:fleymovieapp/view_models/slug_provider.dart';
 import 'package:fleymovieapp/views/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fleymovieapp/views/home.dart';
 void main() async {
   runApp(const FleyMovieApp());
 }
@@ -21,6 +21,7 @@ class FleyMovieApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => MoreMoviesViewModel()),
         ChangeNotifierProvider(create: (context) => NewMovieViewModel()),
         ChangeNotifierProvider(create: (context) => SlugProvider()),
+        ChangeNotifierProvider(create: (context) => FindMoviesViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -3,7 +3,6 @@ import 'package:fleymovieapp/views/home_1.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
-
 import '../../view_models/home_screen_view_model.dart';
 import '../home_screen/home_screen.dart';
 
