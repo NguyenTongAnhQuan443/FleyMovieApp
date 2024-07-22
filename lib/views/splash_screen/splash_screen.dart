@@ -1,4 +1,5 @@
 import 'package:fleymovieapp/views/home.dart';
+import 'package:fleymovieapp/views/home_1.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +33,8 @@ class _SplashScreenState extends State<SplashScreen> {
         if (!viewModel.isLoading) {
           Navigator.pushReplacement(context,
               // MaterialPageRoute(builder: (context) => const HomeScreen()));
-              MaterialPageRoute(builder: (context) => Home()));
+              // MaterialPageRoute(builder: (context) => Home()));
+              MaterialPageRoute(builder: (context) => Home1()));
         }
       },
     );

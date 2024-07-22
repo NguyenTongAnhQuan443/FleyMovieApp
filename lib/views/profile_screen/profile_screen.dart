@@ -5,9 +5,182 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text('Profile'),
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Xin chào. Chúc bạn một ngày tốt lành!',
+                style: TextStyle(
+                  fontSize: 26,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Center(
+              child: Container(
+                width: 130,
+                height: 130,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                ),
+                child: Image.asset('assets/images/logo64px.png'),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Phiên bản: PREMIUM',
+              style: TextStyle(color: Colors.red, fontSize: 18),
+            ),
+            const Text(
+              'Miễn phí',
+              style: TextStyle(color: Colors.white, fontSize: 14),
+            ),
+            const Divider(color: Colors.white),
+            Expanded(
+              child: ListView(
+                children: [
+                  InkWell(
+                    child: const ListTile(
+                      leading: Icon(Icons.backup, color: Colors.white),
+                      title: Text('Sao lưu dữ liệu',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                    onTap: () {
+                      showAlertDialog(context, 'Thông báo',
+                          'Chức năng đang được phát triển, vui lòng quay lại sau');
+                    },
+                  ),
+                  InkWell(
+                    child: const ListTile(
+                      leading: Icon(Icons.cloud_download, color: Colors.white),
+                      title: Text('Khôi phục dữ liệu từ',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                    onTap: () {
+                      showAlertDialog(context, 'Thông báo',
+                          'Chức năng đang được phát triển, vui lòng quay lại sau');
+                    },
+                  ),
+                  InkWell(
+                    child: const ListTile(
+                      leading: Icon(Icons.assignment, color: Colors.white),
+                      title: Text('Trách nhiệm và bản quyền',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                    onTap: () {
+                      showAlertDialog(
+                          context,
+                          'Disclaimer',
+                          'Any legal issues regarding the content on this '
+                              'application should be taken up with the actual '
+                              'file hosts and providers themselves as we are not '
+                              'affiliated with them. In case of copyright '
+                              'infringement, please directly contact the '
+                              'responsible parties or the streaming websites. '
+                              'The app is purely for educational and personal use. '
+                              'FleyMovie does not host any content on the app, and has '
+                              'no control over what media is put up or taken down. '
+                              'FleyMovie functions like any other search engine, '
+                              'such as Google. FleyMovie does not host, upload or'
+                              ' manage any videos, films or content. It simply crawls, '
+                              'aggregates and displayes links in a convenient, '
+                              'user-friendly interface. It merely scrapes 3rd-party '
+                              'websites that are publicly accessable via any '
+                              'regular web browser. It is the responsibility of'
+                              'user to avoid any actions that might violate the laws '
+                              'governing his/her locality. Use FleyMovie at your own '
+                              'risk.\nSpecial thanks !');
+                    },
+                  ),
+                  InkWell(
+                    child: const ListTile(
+                      leading: Icon(Icons.share, color: Colors.white),
+                      title: Text('Chia sẻ ứng dụng',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                    onTap: () {
+                      showAlertDialog(context, 'Thông báo',
+                          'Chức năng đang được phát triển, vui lòng quay lại sau');
+                    },
+                  ),
+                  InkWell(
+                    child: const ListTile(
+                      leading: Icon(Icons.star, color: Colors.white),
+                      title: Text('Đánh giá ứng dụng trên CH Play',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                    onTap: () {
+                      showAlertDialog(context, 'Thông báo',
+                          'Chức năng đang được phát triển, vui lòng quay lại sau');
+                    },
+                  ),
+                  InkWell(
+                    child: const ListTile(
+                      leading: Icon(Icons.settings, color: Colors.white),
+                      title: Text('Cài đặt nâng cao',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                    onTap: () {
+                      showAlertDialog(context, 'Thông báo',
+                          'Chức năng đang được phát triển, vui lòng quay lại sau');
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
+}
+
+// Show Alert
+void showAlertDialog(BuildContext context, String title, String content) {
+  Widget cancelButton = TextButton(
+    child: Text(
+      "OK",
+      style: TextStyle(color: Colors.white),
+    ),
+    onPressed: () {
+      Navigator.of(context).pop();
+    },
+  );
+  // Tạo AlertDialog
+  AlertDialog alert = AlertDialog(
+    backgroundColor: Colors.black,
+    title: Text(
+      title,
+      style: TextStyle(color: Colors.white),
+    ),
+    content: SizedBox(
+      height: content.length < 100 ? 40 : 500,
+      child: ListView(
+        children: [
+          Text(
+            content,
+            style: TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
+    ),
+    actions: [
+      cancelButton,
+    ],
+  );
+
+  // Hiển thị AlertDialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }

@@ -13,7 +13,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int currentTab = 0;
-  final List<Widget> screens = [const HomeScreen(), Chat(), Profile(), const Setting()];
+  final List<Widget> screens = [const HomeScreen(), Chat(), ProfileScreen(), const Setting()];
 
   final PageStorageBucket bucket = PageStorageBucket();
   Widget currentScreen = const HomeScreen();
