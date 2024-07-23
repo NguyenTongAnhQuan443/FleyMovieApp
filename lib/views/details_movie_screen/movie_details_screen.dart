@@ -28,6 +28,7 @@ class _DetailsMovieScreenState extends State<MovieDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return ChangeNotifierProvider(
       create: (_) => MovieDetailsScreenViewModel()..fetchMovieDetails(slug),
       child: Scaffold(

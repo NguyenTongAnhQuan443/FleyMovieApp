@@ -22,6 +22,7 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
   int _currentPage = 1;
   final bool _isInitialLoading = true;
   bool _isLoading = false;
+  bool _isMounted = true;
 
   @override
   void initState() {
@@ -37,6 +38,7 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
 
   @override
   void dispose() {
+    _isMounted = false;
     _scrollController.dispose();
     _textEditingController.dispose();
     super.dispose();
@@ -52,9 +54,11 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
 
   void _fetchMovies(String query) {
     context.read<FindMoviesViewModel>().fetchMovies(query).then((_) {
-      setState(() {
-        _isLoading = false;
-      });
+      if(_isMounted){
+        setState(() {
+          _isLoading = false;
+        });
+      }
     });
   }
 

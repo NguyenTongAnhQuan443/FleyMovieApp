@@ -63,7 +63,7 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft
     ]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
     _hideControlsTimer?.cancel();
     super.dispose();
   }
