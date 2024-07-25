@@ -6,13 +6,60 @@ import '../../models/watch_history.dart';
 import '../../services/shared_preferences_service.dart';
 import '../details_movie_screen/movie_details_screen.dart';
 
-class WatchHistoryWidget extends StatelessWidget {
+class WatchHistoryWidget extends StatefulWidget {
   const WatchHistoryWidget({super.key});
 
+  @override
+  State<WatchHistoryWidget> createState() => _WatchHistoryWidgetState();
+}
+
+class _WatchHistoryWidgetState extends State<WatchHistoryWidget> {
   @override
   Widget build(BuildContext context) {
     final SharedPreferencesService sharedPreferencesService =
         SharedPreferencesService();
+    late Future<List<WatchHistory>> _watchHistoryFuture;
+
+    @override
+    void initState() {
+      super.initState();
+      _watchHistoryFuture = sharedPreferencesService.getWatchHistory();
+    }
+
+    Future<void> _refreshWatchHistory() async {
+      setState(() {
+        _watchHistoryFuture = sharedPreferencesService.getWatchHistory();
+      });
+    }
+
+    Future<void> _confirmDelete(BuildContext context, String slug) async {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Xóa lịch sử xem"),
+            content: const Text("Bạn có muốn xóa phim này khỏi lịch sử xem không ?"),
+            actions: [
+              TextButton(
+                child: const Text("Hủy"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text("Xóa"),
+                onPressed: () async {
+                  await sharedPreferencesService.deleteWatchHistory(slug);
+                  Navigator.of(context).pop();
+                  _refreshWatchHistory();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return Column(
       children: [
         //
@@ -89,6 +136,9 @@ class WatchHistoryWidget extends StatelessWidget {
                                     MovieDetailsScreen(slugMovie),
                               ),
                             );
+                          },
+                          onLongPress: () {
+                            _confirmDelete(context, historyItem.slug);
                           },
                         ),
                         Container(

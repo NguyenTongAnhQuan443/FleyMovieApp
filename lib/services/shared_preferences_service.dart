@@ -34,4 +34,16 @@ class SharedPreferencesService {
 
     return history.map((item) => WatchHistory.fromJson(jsonDecode(item))).toList();
   }
+
+  Future<void> deleteWatchHistory(String slug) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> history = prefs.getStringList(watchHistoryKey) ?? [];
+
+    history.removeWhere((item) {
+      var existingItem = WatchHistory.fromJson(jsonDecode(item));
+      return existingItem.slug == slug;
+    });
+
+    await prefs.setStringList(watchHistoryKey, history);
+  }
 }
