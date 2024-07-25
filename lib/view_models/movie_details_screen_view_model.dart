@@ -1,35 +1,45 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import '../models/kkphim/movie_details.dart';
 
 class MovieDetailsScreenViewModel with ChangeNotifier {
-  // var
+  // Variables
   bool _isLoading = false;
   MovieDetails? _movieDetails;
 
-  // Getter
+  // Getters
   bool get isLoading => _isLoading;
   MovieDetails? get movieDetails => _movieDetails;
 
+  // Fetch movie details
   Future<void> fetchMovieDetails(String slug) async {
     _isLoading = true;
     notifyListeners();
 
-    final response = await http.get(Uri.parse('https://phimapi.com/phim/$slug'));
-    _isLoading = false;
+    try {
+      final response = await http.get(Uri.parse('https://phimapi.com/phim/$slug'));
+      _isLoading = false;
 
-    if (response.statusCode == 200) {
-      final jsonBody = response.body;
-      if (jsonBody != null) {
-        final jsonData = json.decode(jsonBody);
-        _movieDetails = MovieDetails.fromJson(jsonData);
-        notifyListeners();
+      if (response.statusCode == 200) {
+        final jsonBody = response.body;
+        if (jsonBody.isNotEmpty) {
+          final jsonData = json.decode(jsonBody);
+          _movieDetails = MovieDetails.fromJson(jsonData);
+          notifyListeners();
+        } else {
+          throw Exception("Response body is empty");
+        }
       } else {
-        throw Exception("Reponse body is null");
+        throw Exception("Failed to load movie details: ${response.statusCode}");
       }
-    } else {
-      throw Exception("Faild to load movie details");
+    } on SocketException catch (e) {
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }

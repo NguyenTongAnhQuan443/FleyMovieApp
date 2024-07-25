@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:fleymovieapp/services/http_overrides.dart';
 import 'package:fleymovieapp/view_models/find_movies_view_model.dart';
 import 'package:fleymovieapp/view_models/home_screen_view_model.dart';
 import 'package:fleymovieapp/view_models/more_movies_view_model.dart';
@@ -6,7 +9,9 @@ import 'package:fleymovieapp/view_models/slug_provider.dart';
 import 'package:fleymovieapp/views/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 void main() async {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const FleyMovieApp());
 }
 
@@ -31,7 +36,6 @@ class FleyMovieApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home: const SplashScreen(),
-        // home: Home(),
       ),
     );
   }

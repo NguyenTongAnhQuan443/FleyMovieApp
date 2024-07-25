@@ -4,6 +4,7 @@ import 'package:fleymovieapp/views/home_screen/banner_movie_widget.dart';
 import 'package:fleymovieapp/views/home_screen/movie_list_widget.dart';
 import 'package:fleymovieapp/views/home_screen/logo_widget.dart';
 import 'package:fleymovieapp/views/home_screen/source_list_modal.dart';
+import 'package:fleymovieapp/views/home_screen/watch_history_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:fleymovieapp/view_models/home_screen_view_model.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -72,6 +72,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
                     },
                   ),
+                  //
+                  const WatchHistoryWidget(),
                 ],
               ),
             ),
@@ -95,9 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.grey,
       title: const Text("Thông báo"),
       content: const SizedBox(
-          width: 200,
-          height: 30,
-          child: Text("Vui lòng đợi trong giây lát")),
+          width: 200, height: 30, child: Text("Vui lòng đợi trong giây lát")),
       actions: [
         cancelButton,
       ],

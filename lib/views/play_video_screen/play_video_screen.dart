@@ -1,13 +1,21 @@
 import 'dart:async';
+import 'package:fleymovieapp/models/watch_history.dart';
+import 'package:fleymovieapp/services/shared_preferences_service.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/services.dart';
 import 'package:screen_brightness/screen_brightness.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class PlayVideoScreen extends StatefulWidget {
   final String movieUrl;
+  final String slug;
+  int episode;
+  String posterUrl;
+  String name;
 
-  const PlayVideoScreen(this.movieUrl, {super.key});
+  PlayVideoScreen(
+      this.movieUrl, this.slug, this.episode, this.posterUrl, this.name, {super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -26,12 +34,15 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
   bool _lockScreen = false;
   double _brightness = 0.5;
   double _volume = 0.5;
+  final SharedPreferencesService _sharedPreferencesService =
+      SharedPreferencesService();
 
   _PlayVideoScreenState(this.movieUrl);
 
   @override
   void initState() {
     super.initState();
+    WakelockPlus.enabled; // keep the screen on
     // Lock the screen orientation to landscape
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
@@ -55,6 +66,8 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
 
   @override
   void dispose() {
+    WakelockPlus.disable();
+    _saveWatchHistory(); // Lưu lịch sử xem
     _controller.dispose();
     // Unlock the screen orientation and show the status bar and navigation bar
     SystemChrome.setPreferredOrientations([
@@ -63,9 +76,21 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft
     ]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
     _hideControlsTimer?.cancel();
     super.dispose();
+  }
+
+  Future<void> _saveWatchHistory() async {
+    final watchHistory = WatchHistory(
+      movieUrl: widget.movieUrl,
+      slug: widget.slug,
+      episode: widget.episode,
+      posterUrl: widget.posterUrl,
+      name: widget.name,
+    );
+    await _sharedPreferencesService.saveWatchHistory(watchHistory);
   }
 
   void _toggleControlsVisibility() {

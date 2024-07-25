@@ -66,8 +66,20 @@ class BuildEpisode extends StatelessWidget {
               ),
             ),
             onTap: () {
-              String? url = movieDetails.episodes!.first.serverData![index].linkM3U8;
-              Navigator.push(context, MaterialPageRoute(builder: (_) => PlayVideoScreen(url!)));
+              String? url =
+                  movieDetails.episodes!.first.serverData![index].linkM3U8;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PlayVideoScreen(
+                    url!,
+                    movieDetails.movie!.slug!,
+                    index,
+                    movieDetails.movie!.posterUrl!,
+                    movieDetails.movie!.name!,
+                  ),
+                ),
+              );
             },
           );
         },

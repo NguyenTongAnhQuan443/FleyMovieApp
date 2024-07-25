@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../models/watch_history.dart';
+import '../../services/shared_preferences_service.dart';
 class BuildWatchAMovie extends StatelessWidget {
   const BuildWatchAMovie({super.key});
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       margin: const EdgeInsets.only(top: 20, left: 10),
       child: Row(
@@ -12,7 +15,6 @@ class BuildWatchAMovie extends StatelessWidget {
           Expanded(
             flex: 2,
             child: ElevatedButton(
-              onPressed: () {},
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
@@ -25,6 +27,8 @@ class BuildWatchAMovie extends StatelessWidget {
                 'XEM PHIM',
                 style: TextStyle(fontSize: 14),
               ),
+              onPressed: () {
+              },
             ),
           ),
           Expanded(
