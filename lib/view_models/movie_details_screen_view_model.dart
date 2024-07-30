@@ -8,16 +8,29 @@ class MovieDetailsScreenViewModel with ChangeNotifier {
   // Variables
   bool _isLoading = false;
   MovieDetails? _movieDetails;
+  bool _isDisposed = false;
 
   // Getters
   bool get isLoading => _isLoading;
   MovieDetails? get movieDetails => _movieDetails;
 
+  // Override dispose method
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+  void _safeNotifyListeners() {
+    if(!_isDisposed){
+      notifyListeners();
+    }
+  }
+
   // Fetch movie details
   Future<void> fetchMovieDetails(String slug) async {
     _isLoading = true;
-    notifyListeners();
-
+    // notifyListeners();
+    _safeNotifyListeners();
     try {
       final response = await http.get(Uri.parse('https://phimapi.com/phim/$slug'));
       _isLoading = false;
@@ -27,7 +40,8 @@ class MovieDetailsScreenViewModel with ChangeNotifier {
         if (jsonBody.isNotEmpty) {
           final jsonData = json.decode(jsonBody);
           _movieDetails = MovieDetails.fromJson(jsonData);
-          notifyListeners();
+          // notifyListeners();
+          _safeNotifyListeners();
         } else {
           throw Exception("Response body is empty");
         }
@@ -36,10 +50,12 @@ class MovieDetailsScreenViewModel with ChangeNotifier {
       }
     } on SocketException catch (e) {
       _isLoading = false;
-      notifyListeners();
+      // notifyListeners();
+      _safeNotifyListeners();
     } catch (e) {
       _isLoading = false;
-      notifyListeners();
+      // notifyListeners();
+      _safeNotifyListeners();
     }
   }
 }

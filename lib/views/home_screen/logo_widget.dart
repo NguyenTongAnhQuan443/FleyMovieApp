@@ -1,6 +1,6 @@
-import 'package:fleymovieapp/view_models/more_movies_view_model.dart';
-import 'package:fleymovieapp/view_models/new_movie_view_model.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LogoWidget extends StatelessWidget {
   const LogoWidget({super.key});
@@ -47,7 +47,9 @@ class LogoWidget extends StatelessWidget {
           Row(
             children: [
               ElevatedButton(
-                onPressed: () async {},
+                onPressed: () {
+                  _showBottomSheet(context);
+                },
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(50, 32),
                   foregroundColor: Colors.white,
@@ -58,18 +60,110 @@ class LogoWidget extends StatelessWidget {
                 ),
                 child: const Text('Premium'),
               ),
-              // Container(
-              //   margin: const EdgeInsets.only(left: 10),
-              //   child: const Icon(
-              //     Icons.menu,
-              //     size: 28,
-              //     color: Colors.white,
-              //   ),
-              // ),
             ],
           ),
         ],
       ),
     );
+  }
+}
+
+void _showBottomSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (context) {
+      return Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: buildBottomSheet(context),
+      );
+    },
+  );
+}
+
+// Widget Bottom Sheet
+Widget buildBottomSheet(BuildContext context) {
+  return Container(
+    width: double.infinity,
+    color: Colors.white,
+    padding: const EdgeInsets.all(16.0),
+    height: 200,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Text(
+          'Phiên bản Premium',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+              child: SizedBox(
+                height: 40,
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Nhập mã kích hoạt...',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 20),
+            ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              ),
+              child: const Text(
+                'Xác nhận mã',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        RichText(
+          text: TextSpan(children: <TextSpan>[
+            TextSpan(
+                text: 'Phương thức khác, vui lòng liên hệ nhà cung cấp',
+                style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 16,
+                    decoration: TextDecoration.underline),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    _launchURL();
+                  })
+          ]),
+        ),
+      ],
+    ),
+  );
+}
+
+void _launchURL() async {
+  final Uri link = Uri.parse('https://www.facebook.com/groups/472852058871106');
+  if (await canLaunchUrl(link)) {
+    await launchUrl(link, mode: LaunchMode.externalApplication);
+  } else {
+    throw 'Lỗi Link Premium $link';
   }
 }

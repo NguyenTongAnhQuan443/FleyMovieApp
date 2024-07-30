@@ -26,7 +26,7 @@ class MovieListWidget extends StatelessWidget {
                   children: movie.data?.items?.map((item) {
                         final url = item.posterUrl;
                         const appDomainCdnImage = 'https://img.phimapi.com/';
-                        final posterUrl = '${appDomainCdnImage!}/${url!}';
+                        final posterUrl = '${appDomainCdnImage}/${url!}';
                         return InkWell(
                           child: FutureBuilder<bool>(
                             future: viewModel.checkImageUrl(posterUrl),
@@ -146,7 +146,7 @@ class MovieListWidget extends StatelessWidget {
             ),
           ),
         ),
-        buildTitleMovie(item),
+        Expanded(child: buildTitleMovie(item)),
       ],
     );
   }

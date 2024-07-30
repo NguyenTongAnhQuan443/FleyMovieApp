@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "96565106803",
+    "project_id": "fleymovie",
+    "storage_bucket": "fleymovie.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:96565106803:android:8ea486361760bb61987206",
+        "android_client_info": {
+          "package_name": "com.example.fleymovieapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF7dNdl7rCsQ50q4qGd3lRP6q2JQUJasY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
