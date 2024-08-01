@@ -19,7 +19,6 @@ class BuildEpisodeCurrentMovie extends StatelessWidget {
             style: const TextStyle(
                 color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 14),
           ),
-
           Text(
             'Tập hiện tại: ${movieDetails.movie!.episodeCurrent ?? 'N/A'}',
             style: const TextStyle(

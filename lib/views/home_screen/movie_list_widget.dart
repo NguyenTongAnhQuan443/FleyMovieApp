@@ -26,36 +26,27 @@ class MovieListWidget extends StatelessWidget {
                   children: movie.data?.items?.map((item) {
                         final url = item.posterUrl;
                         const appDomainCdnImage = 'https://img.phimapi.com/';
-                        final posterUrl = '${appDomainCdnImage}/${url!}';
+                        final posterUrl = '$appDomainCdnImage/${url!}';
                         return InkWell(
-                          child: FutureBuilder<bool>(
-                            future: viewModel.checkImageUrl(posterUrl),
-                            builder: (context, snapshot)
-                            {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return buildPosterAndTitleMovieWaiting(
-                                    item, context);
-                              } else {
-                                if (snapshot.hasData && snapshot.data!) {
-                                  return buildPosterAndMovieDataTrue(
-                                      item, posterUrl, context);
-                                } else {
-                                  return buildPosterAndTitleMovie(
-                                      item, context);
-                                }
-                              }
-                            },
-                          ),
+                          child: buildPosterAndMovieDataTrue(
+                              item, posterUrl, context),
                           onTap: () {
                             String? slugMovie = item.slug;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    MovieDetailsScreen(slugMovie!),
-                              ),
-                            );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) =>
+                            //         MovieDetailsScreen(slugMovie!),
+                            //   ),
+                            // );
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ChangeNotifierProvider(
+                                          create: (_) => HomeScreenViewModel(),
+                                          child: MovieDetailsScreen(slugMovie!),
+                                        )));
                           },
                         );
                       }).toList() ??
@@ -106,9 +97,19 @@ class MovieListWidget extends StatelessWidget {
 
   // Widget Image Default
   Widget buildImageDefault() {
-    return Image.asset(
-      'assets/images/default_poster.jpg',
-      fit: BoxFit.cover,
+    // return Image.asset(
+    //   'assets/images/default_poster.jpg',
+    //   fit: BoxFit.cover,
+    // );
+    return Container(
+      color: Colors.black,
+      child: const Center(
+        child: Icon(
+          Icons.movie_creation_outlined,
+          color: Colors.white,
+          size: 40,
+        ),
+      ),
     );
   }
 
@@ -193,8 +194,10 @@ class MovieListWidget extends StatelessWidget {
                   ),
                 ),
               ),
+              //
               errorWidget: (context, url, error) =>
                   buildPosterAndTitleMovie(item, context),
+              //
             ),
           ),
         ),

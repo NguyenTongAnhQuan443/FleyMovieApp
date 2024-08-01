@@ -123,27 +123,29 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
                 final posterUrl = '$appDomainCdnImage/$poster';
                 final thumbUrl = '$appDomainCdnImage/$thumb';
 
-                return FutureBuilder<bool>(
-                  future: viewModel.checkImageUrl(posterUrl),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                    if (snapshot.hasError) {
-                      return buildImageDefault();
-                    } else {
-                      if (snapshot.hasData) {
-                        if (snapshot.data!) {
-                          return buildItemMovie(
-                              viewModel, index, posterUrl, thumbUrl, true);
-                        } else {
-                          return buildItemMovie(
-                              viewModel, index, posterUrl, thumbUrl, false);
-                        }
-                      } else {
-                        return buildLoading();
-                      }
-                    }
-                  },
-                );
+                // return FutureBuilder<bool>(
+                //   future: viewModel.checkImageUrl(posterUrl),
+                //   builder:
+                //       (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                //     if (snapshot.hasError) {
+                //       return buildImageDefault();
+                //     } else {
+                //       if (snapshot.hasData) {
+                //         if (snapshot.data!) {
+                //           return buildItemMovie(
+                //               viewModel, index, posterUrl, thumbUrl, true);
+                //         } else {
+                //           return buildItemMovie(
+                //               viewModel, index, posterUrl, thumbUrl, false);
+                //         }
+                //       } else {
+                //         return buildLoading();
+                //       }
+                //     }
+                //   },
+                // );
+                return buildItemMovie(
+                    viewModel, index, posterUrl, thumbUrl, true);
               },
             );
           } else {
@@ -201,6 +203,10 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
                           ),
                         ),
                       ),
+                      //
+                      errorWidget: (context, url, error) =>
+                          buildImageDefault(),
+                      //
                       placeholder: (context, url) => buildLoading(),
                     ),
                   ),
@@ -263,9 +269,15 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
   }
 
   Widget buildImageDefault() {
-    return Image.asset(
-      'assets/images/default_poster.jpg',
-      fit: BoxFit.cover,
+    // return Image.asset(
+    //   'assets/images/default_poster.jpg',
+    //   fit: BoxFit.cover,
+    // );
+    return Container(
+      color: Colors.black,
+      child: const Center(
+        child: Icon(Icons.movie_creation_outlined, color: Colors.white, size: 40,),
+      ),
     );
   }
 

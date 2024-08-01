@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'find_movies_screen/find_movies_screen.dart';
 
 class Home extends StatefulWidget {
+  const Home({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return _HomeState();
@@ -14,7 +16,12 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int currentTab = 0;
-  final List<Widget> screens = [const HomeScreen(), const FindMoviesScreen(), ProfileScreen(), const Setting()];
+  final List<Widget> screens = [
+    const HomeScreen(),
+    const FindMoviesScreen(),
+    const ProfileScreen(),
+    const Setting()
+  ];
 
   final PageStorageBucket bucket = PageStorageBucket();
   Widget currentScreen = const HomeScreen();

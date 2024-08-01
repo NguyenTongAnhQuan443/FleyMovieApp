@@ -1,6 +1,6 @@
 import 'package:fleymovieapp/view_models/new_movie_view_model.dart';
 import 'package:fleymovieapp/view_models/slug_provider.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class BannerMovieWidget extends StatefulWidget {
@@ -49,9 +49,10 @@ class _BannerMovieWidgetState extends State<BannerMovieWidget> {
                   String imageUrl = imageBannerUrls[index];
                   int originalIndex = viewModel.newMovie!.items!
                       .indexWhere((item) => item.posterUrl == imageUrl);
-                   slug = returnSlugMovie(viewModel, originalIndex);
+                  slug = returnSlugMovie(viewModel, originalIndex);
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Provider.of<SlugProvider>(context, listen: false).setSlug(slug);
+                    Provider.of<SlugProvider>(context, listen: false)
+                        .setSlug(slug);
                   });
                   return SizedBox(
                     width: MediaQuery.of(context).size.width,
@@ -80,9 +81,19 @@ Widget buildBannerDefault() {
   return SizedBox(
     height: 500,
     width: double.infinity,
-    child: Image.asset(
-      'assets/images/default_poster.jpg',
-      fit: BoxFit.cover,
+    // child: Image.asset(
+    //   'assets/images/default_poster.jpg',
+    //   fit: BoxFit.cover,
+    // ),
+    child: Container(
+      color: Colors.black,
+      child: const Center(
+        child: Icon(
+          Icons.movie_creation_outlined,
+          color: Colors.white,
+          size: 40,
+        ),
+      ),
     ),
   );
 }

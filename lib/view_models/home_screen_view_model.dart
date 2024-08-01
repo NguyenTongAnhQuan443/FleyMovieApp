@@ -78,24 +78,4 @@ class HomeScreenViewModel extends ChangeNotifier {
       return null;
     }
   }
-
-  Future<bool> checkImageUrl(String imageUrl) async {
-    try {
-      final response = await http.get(Uri.parse(imageUrl));
-
-      if (response.statusCode == HttpStatus.ok) {
-        final bytes = response.bodyBytes;
-        return isImage(bytes);
-      } else {
-        return false;
-      }
-    } catch (e) {
-      return false;
-    }
-  }
-
-  bool isImage(List<int> bytes) {
-    if (bytes.length < 4) return false;
-    return true;
-  }
 }

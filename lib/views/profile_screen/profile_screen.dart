@@ -13,7 +13,7 @@ class ProfileScreen extends StatelessWidget {
         child: Consumer<UserViewModel>(
           builder: (context, viewModel, child) {
             if (viewModel.user == null) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else {
               var user = viewModel.user!;
               return Column(

@@ -11,9 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MovieDetailsScreen extends StatefulWidget {
-  String slug;
+  final String slug;
 
-  MovieDetailsScreen(this.slug, {super.key});
+  const MovieDetailsScreen(this.slug, {super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -82,7 +82,7 @@ class _DetailsMovieScreenState extends State<MovieDetailsScreen> {
               } else {
                 return Stack(
                   children: [
-                   BuildMovieError(),
+                   const BuildMovieError(),
                     onTapArrowBack(),
                   ],
 

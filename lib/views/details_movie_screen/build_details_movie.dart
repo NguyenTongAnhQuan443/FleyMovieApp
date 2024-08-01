@@ -19,10 +19,14 @@ class BuildDetailsMovie extends StatelessWidget {
       );
     }
 
-    final actor1 = movie.actor != null && movie.actor!.isNotEmpty ? movie.actor![0] : '';
-    final actor2 = movie.actor != null && movie.actor!.length > 1 ? movie.actor![1] : '';
-    final actor3 = movie.actor != null && movie.actor!.length > 2 ? movie.actor![2] : '';
-    final actor4 = movie.actor != null && movie.actor!.length > 3 ? movie.actor![3] : '';
+    final actor1 =
+        movie.actor != null && movie.actor!.isNotEmpty ? movie.actor![0] : '';
+    final actor2 =
+        movie.actor != null && movie.actor!.length > 1 ? movie.actor![1] : '';
+    final actor3 =
+        movie.actor != null && movie.actor!.length > 2 ? movie.actor![2] : '';
+    final actor4 =
+        movie.actor != null && movie.actor!.length > 3 ? movie.actor![3] : '';
 
     return Container(
       margin: const EdgeInsets.only(left: 10),

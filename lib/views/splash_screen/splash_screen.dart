@@ -1,10 +1,8 @@
-import 'package:fleymovieapp/views/home.dart';
 import 'package:fleymovieapp/views/home_1.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import '../../view_models/home_screen_view_model.dart';
-import '../home_screen/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -30,10 +28,11 @@ class _SplashScreenState extends State<SplashScreen> {
       (_) async {
         await viewModel.fetchMovies();
         if (!viewModel.isLoading) {
-          Navigator.pushReplacement(context,
+          Navigator.pushReplacement(
+              context,
               // MaterialPageRoute(builder: (context) => const HomeScreen()));
               // MaterialPageRoute(builder: (context) => Home()));
-              MaterialPageRoute(builder: (context) => Home1()));
+              MaterialPageRoute(builder: (context) => const Home1()));
         }
       },
     );

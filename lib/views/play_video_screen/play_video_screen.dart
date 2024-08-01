@@ -42,7 +42,7 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
   @override
   void initState() {
     super.initState();
-    WakelockPlus.enabled; // keep the screen on
+    WakelockPlus.enable(); // keep the screen on
     // Lock the screen orientation to landscape
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
@@ -56,6 +56,7 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
         setState(() {
           _totalDuration = _controller.value.duration.inSeconds.toDouble();
         });
+        _controller.play();
       });
     _controller.addListener(() {
       setState(() {
