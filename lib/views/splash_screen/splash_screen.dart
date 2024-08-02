@@ -1,16 +1,14 @@
-import 'package:fleymovieapp/views/home_1.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import '../../view_models/home_screen_view_model.dart';
+import '../home.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() {
-    return _SplashScreenState();
-  }
+  State<StatefulWidget> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
@@ -23,18 +21,19 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _fetchData() async {
     final viewModel = Provider.of<HomeScreenViewModel>(context, listen: false);
 
-    // Dùng SchedulerBinding để đợi build widget hoàn tất mới lắng nghe notifyListeners từ viewModel
-    SchedulerBinding.instance.addPostFrameCallback(
-      (_) async {
-        await viewModel.fetchMovies();
-        if (!viewModel.isLoading) {
-          Navigator.pushReplacement(
-              context,
-              // MaterialPageRoute(builder: (context) => const HomeScreen()));
-              // MaterialPageRoute(builder: (context) => Home()));
-              MaterialPageRoute(builder: (context) => const Home1()));
-        }
-      },
+    // SchedulerBinding để đợi build widget hoàn tất mới lắng nghe notifyListeners từ viewModel
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      await viewModel.fetchMovies();
+      if (mounted && !viewModel.isLoading) {
+        _navigateToHome();
+      }
+    });
+  }
+
+  void _navigateToHome() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const Home()),
     );
   }
 
@@ -59,34 +58,32 @@ class _SplashScreenState extends State<SplashScreen> {
                     width: 64,
                     height: 64,
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
+                  const SizedBox(width: 10),
                   const Text.rich(
                     TextSpan(
                       children: [
                         TextSpan(
                           text: 'Fley',
                           style: TextStyle(
-                              fontSize: 40,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
+                            fontSize: 40,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         TextSpan(
                           text: 'Movie',
                           style: TextStyle(
-                              fontSize: 40,
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold),
+                            fontSize: 40,
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               const Text(
                 'Đang tải dữ liệu phim',
                 style: TextStyle(color: Colors.white, fontSize: 16),
@@ -95,9 +92,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 'Vui lòng chờ trong giây lát',
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               if (viewModel.isLoading)
                 const SizedBox(
                   width: 20,

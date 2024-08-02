@@ -72,11 +72,11 @@ class BuildEpisode extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (_) => PlayVideoScreen(
-                    url!,
-                    movieDetails.movie!.slug!,
-                    index,
-                    movieDetails.movie!.posterUrl!,
-                    movieDetails.movie!.name!,
+                    movieUrl: url!,
+                    slug: movieDetails.movie!.slug!,
+                    episode: index,
+                    posterUrl: movieDetails.movie!.posterUrl!,
+                    name: movieDetails.movie!.name!,
                   ),
                 ),
               );

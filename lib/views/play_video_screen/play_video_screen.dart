@@ -10,21 +10,24 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 class PlayVideoScreen extends StatefulWidget {
   final String movieUrl;
   final String slug;
-  int episode;
-  String posterUrl;
-  String name;
+  final int episode;
+  final String posterUrl;
+  final String name;
 
-  PlayVideoScreen(
-      this.movieUrl, this.slug, this.episode, this.posterUrl, this.name, {super.key});
+  const PlayVideoScreen({
+    required this.movieUrl,
+    required this.slug,
+    required this.episode,
+    required this.posterUrl,
+    required this.name,
+    super.key,
+  });
 
   @override
-  State<StatefulWidget> createState() {
-    return _PlayVideoScreenState(movieUrl);
-  }
+  State<PlayVideoScreen> createState() => _PlayVideoScreenState();
 }
 
 class _PlayVideoScreenState extends State<PlayVideoScreen> {
-  String movieUrl;
   late VideoPlayerController _controller;
   double _currentSliderValue = 0.0;
   double _totalDuration = 0.0;
@@ -34,24 +37,26 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
   bool _lockScreen = false;
   double _brightness = 0.5;
   double _volume = 0.5;
-  final SharedPreferencesService _sharedPreferencesService =
-      SharedPreferencesService();
-
-  _PlayVideoScreenState(this.movieUrl);
+  final SharedPreferencesService _sharedPreferencesService = SharedPreferencesService();
 
   @override
   void initState() {
     super.initState();
-    WakelockPlus.enable(); // keep the screen on
-    // Lock the screen orientation to landscape
+    _initializeVideoPlayer();
+    _initializeScreenSettings();
+  }
+
+  void _initializeScreenSettings() {
+    WakelockPlus.enable();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
     ]);
-    // Hide the status bar and navigation bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  }
 
-    _controller = VideoPlayerController.networkUrl(Uri.parse(movieUrl))
+  void _initializeVideoPlayer() {
+    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.movieUrl))
       ..initialize().then((_) {
         setState(() {
           _totalDuration = _controller.value.duration.inSeconds.toDouble();
@@ -68,19 +73,21 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
   @override
   void dispose() {
     WakelockPlus.disable();
-    _saveWatchHistory(); // Lưu lịch sử xem
+    _saveWatchHistory();
     _controller.dispose();
-    // Unlock the screen orientation and show the status bar and navigation bar
+    _resetScreenSettings();
+    _hideControlsTimer?.cancel();
+    super.dispose();
+  }
+
+  void _resetScreenSettings() {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
       DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft
+      DeviceOrientation.landscapeLeft,
     ]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values);
-    _hideControlsTimer?.cancel();
-    super.dispose();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
   }
 
   Future<void> _saveWatchHistory() async {
@@ -105,7 +112,6 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
         _hideControlsTimer?.cancel();
       }
     } else {
-      // When screen is locked, only show the lock icon
       setState(() {
         _showControls = false;
       });
@@ -113,7 +119,7 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
   }
 
   void _startTimerToHideControls() {
-    _hideControlsTimer?.cancel(); // Cancel any previous timer
+    _hideControlsTimer?.cancel();
     _hideControlsTimer = Timer(const Duration(seconds: 4), () {
       setState(() {
         if (!_isPause && !_lockScreen) {
@@ -128,25 +134,22 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
       if (_controller.value.isPlaying) {
         _controller.pause();
         _isPause = true;
-        _hideControlsTimer?.cancel(); // Cancel timer when paused
+        _hideControlsTimer?.cancel();
       } else {
         _controller.play();
         _isPause = false;
-        _startTimerToHideControls(); // Restart timer when playing
+        _startTimerToHideControls();
       }
     });
   }
 
   void _replayVideo() {
-    final newPosition =
-        _controller.value.position - const Duration(seconds: 10);
-    _controller
-        .seekTo(newPosition > Duration.zero ? newPosition : Duration.zero);
+    final newPosition = _controller.value.position - const Duration(seconds: 10);
+    _controller.seekTo(newPosition > Duration.zero ? newPosition : Duration.zero);
   }
 
   void _forwardVideo() {
-    final newPosition =
-        _controller.value.position + const Duration(seconds: 10);
+    final newPosition = _controller.value.position + const Duration(seconds: 10);
     final duration = _controller.value.duration;
     _controller.seekTo(newPosition < duration ? newPosition : duration);
   }
@@ -158,12 +161,19 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
     });
   }
 
-  Orientation get orientation => MediaQuery.of(context).orientation;
+  String formatDuration(int seconds) {
+    Duration duration = Duration(seconds: seconds);
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return "${duration.inHours > 0 ? '${twoDigits(duration.inHours)}:' : ''}$twoDigitMinutes:$twoDigitSeconds";
+  }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    Orientation orientation = MediaQuery.of(context).orientation;
     return Scaffold(
       backgroundColor: Colors.black.withOpacity(0.5),
       body: GestureDetector(
@@ -173,43 +183,34 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
             Center(
               child: _controller.value.isInitialized
                   ? Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        AspectRatio(
-                          aspectRatio: orientation == Orientation.portrait
-                              ? 16 / 9
-                              : screenWidth / screenHeight,
-                          child: VideoPlayer(_controller),
-                        ),
-                        if (_showControls && !_lockScreen) buildDuration(),
-                        if (_showControls && !_lockScreen) buildProgressVideo(),
-                      ],
-                    )
-                  : const CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
+                alignment: Alignment.bottomCenter,
+                children: [
+                  AspectRatio(
+                    aspectRatio: orientation == Orientation.portrait
+                        ? 16 / 9
+                        : screenWidth / screenHeight,
+                    child: VideoPlayer(_controller),
+                  ),
+                  if (_showControls && !_lockScreen) _buildDuration(),
+                  if (_showControls && !_lockScreen) _buildProgressVideo(),
+                ],
+              )
+                  : const CircularProgressIndicator(color: Colors.white),
             ),
-            if (_showControls && !_lockScreen) buildIconBack(),
-            if (_showControls && !_lockScreen) buildReplayPauseforwardVideo(),
-            if (_showControls && !_lockScreen) buildVolumeSlider(),
-            if (_showControls && !_lockScreen) buildBrightnessSlider(),
-            buildLockScreen(),
+            if (_showControls && !_lockScreen) _buildIconBack(),
+            if (_showControls && !_lockScreen)
+              _buildNameAndEpisode(widget.name, widget.episode + 1),
+            if (_showControls && !_lockScreen) _buildReplayPauseforwardVideo(),
+            if (_showControls && !_lockScreen) _buildVolumeSlider(),
+            if (_showControls && !_lockScreen) _buildBrightnessSlider(),
+            _buildLockScreen(),
           ],
         ),
       ),
     );
   }
 
-  String formatDuration(int seconds) {
-    Duration duration = Duration(seconds: seconds);
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return "${duration.inHours > 0 ? '${twoDigits(duration.inHours)}:' : ''}$twoDigitMinutes:$twoDigitSeconds";
-  }
-
-  // Build Icon Back
-  Widget buildIconBack() {
+  Widget _buildIconBack() {
     return Positioned(
       top: 20,
       left: 20,
@@ -225,8 +226,21 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
     );
   }
 
-  // Build Replay-Pause-forward-Video
-  Widget buildReplayPauseforwardVideo() {
+  Widget _buildNameAndEpisode(String name, int episode) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0),
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: Text(
+          '$name - Tập: $episode',
+          style: const TextStyle(
+              fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReplayPauseforwardVideo() {
     return Positioned.fill(
       child: Center(
         child: Column(
@@ -238,43 +252,33 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
                 Flexible(
                   child: Center(
                     child: IconButton(
-                      onPressed: () {
-                        _replayVideo();
-                      },
+                      onPressed: _replayVideo,
                       icon: const Icon(
                         Icons.replay_10,
                         color: Colors.white,
-                        size: 40,
+                        size: 50,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(
-                  width: 100,
-                ),
+                const SizedBox(width: 100),
                 IconButton(
                   onPressed: _togglePlayPause,
                   icon: Icon(
-                    _controller.value.isPlaying
-                        ? Icons.pause
-                        : Icons.play_arrow,
-                    size: 40,
+                    _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                    size: 50,
                     color: Colors.white,
                   ),
                 ),
-                const SizedBox(
-                  width: 100,
-                ),
+                const SizedBox(width: 100),
                 Flexible(
                   child: Center(
                     child: IconButton(
-                      onPressed: () {
-                        _forwardVideo();
-                      },
+                      onPressed: _forwardVideo,
                       icon: const Icon(
                         Icons.forward_10,
                         color: Colors.white,
-                        size: 40,
+                        size: 50,
                       ),
                     ),
                   ),
@@ -287,8 +291,7 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
     );
   }
 
-  // Widget Duration
-  Widget buildDuration() {
+  Widget _buildDuration() {
     return Positioned(
       bottom: 42,
       left: 5,
@@ -309,8 +312,7 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
     );
   }
 
-  // Widget build Progress video
-  Widget buildProgressVideo() {
+  Widget _buildProgressVideo() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -331,8 +333,7 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
     );
   }
 
-  // Lock Screen
-  Widget buildLockScreen() {
+  Widget _buildLockScreen() {
     return Positioned(
       bottom: 10,
       right: 10,
@@ -343,7 +344,7 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
           });
         },
         icon: Icon(
-          (_lockScreen) ? Icons.lock_outline_rounded : Icons.lock_open_outlined,
+          _lockScreen ? Icons.lock_outline_rounded : Icons.lock_open_outlined,
           color: Colors.white,
           size: 20,
         ),
@@ -351,8 +352,7 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
     );
   }
 
-  // Widget Brightness Slider
-  Widget buildBrightnessSlider() {
+  Widget _buildBrightnessSlider() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -364,11 +364,9 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
               child: SizedBox(
                 child: SliderTheme(
                   data: SliderTheme.of(context).copyWith(
-                    trackHeight: 2.0, // Độ mỏng của thanh trượt
-                    thumbShape:
-                        const RoundSliderThumbShape(enabledThumbRadius: 5.0),
-                    overlayShape:
-                        const RoundSliderOverlayShape(overlayRadius: 24.0),
+                    trackHeight: 2.0,
+                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5.0),
+                    overlayShape: const RoundSliderOverlayShape(overlayRadius: 24.0),
                   ),
                   child: Slider(
                     activeColor: Colors.red,
@@ -389,16 +387,14 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
               Icons.sunny,
               color: Colors.white,
               size: 20,
-            )
+            ),
           ],
         ),
       ],
     );
   }
 
-  // Widget Build Volume Slider
-
-  Widget buildVolumeSlider() {
+  Widget _buildVolumeSlider() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -406,15 +402,13 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             RotatedBox(
-              quarterTurns: 3, // Xoay
+              quarterTurns: 3,
               child: SizedBox(
                 child: SliderTheme(
                   data: SliderTheme.of(context).copyWith(
-                    trackHeight: 2.0, // Độ mỏng của thanh trượt
-                    thumbShape:
-                        const RoundSliderThumbShape(enabledThumbRadius: 5.0),
-                    overlayShape:
-                        const RoundSliderOverlayShape(overlayRadius: 24.0),
+                    trackHeight: 2.0,
+                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5.0),
+                    overlayShape: const RoundSliderOverlayShape(overlayRadius: 24.0),
                   ),
                   child: Slider(
                     activeColor: Colors.red,
@@ -434,7 +428,7 @@ class _PlayVideoScreenState extends State<PlayVideoScreen> {
             const Icon(
               Icons.volume_up_outlined,
               color: Colors.white,
-            )
+            ),
           ],
         ),
       ],
