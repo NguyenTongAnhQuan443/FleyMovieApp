@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fleymovieapp/view_models/find_movies_view_model.dart';
 import 'package:flutter/material.dart';
@@ -16,19 +14,17 @@ class FindMoviesScreen extends StatefulWidget {
 }
 
 class _FindMoviesScreenState extends State<FindMoviesScreen> {
-  late TextEditingController _textEditingController;
-  String defaultSearch = '';
-  late ScrollController _scrollController;
-  int _currentPage = 1;
+  final TextEditingController _textEditingController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   final bool _isInitialLoading = true;
   bool _isLoading = false;
   bool _isMounted = true;
+  int _currentPage = 1;
+  String defaultSearch = '';
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
-    _textEditingController = TextEditingController();
     _textEditingController.addListener(_onSearchChanged);
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -54,7 +50,7 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
 
   void _fetchMovies(String query) {
     context.read<FindMoviesViewModel>().fetchMovies(query).then((_) {
-      if(_isMounted){
+      if (_isMounted) {
         setState(() {
           _isLoading = false;
         });
@@ -89,22 +85,22 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
         child: Column(
           children: [
             const BuildHeader(),
-            buildFunctionSearch(),
+            _buildFunctionSearch(),
             !_isInitialLoading
                 ? const Center()
-                : buildMoreMovie(crossAxisCount),
+                : _buildMoreMovie(crossAxisCount),
           ],
         ),
       ),
     );
   }
 
-  Widget buildMoreMovie(int crossAxisCount) {
+  Widget _buildMoreMovie(int crossAxisCount) {
     return Expanded(
       child: Consumer<FindMoviesViewModel>(
         builder: (context, viewModel, child) {
           if (_isLoading) {
-            return buildLoading();
+            return _buildLoading();
           } else if (viewModel.moviesList.isNotEmpty) {
             return GridView.builder(
               controller: _scrollController,
@@ -119,60 +115,21 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
               itemBuilder: (context, index) {
                 const appDomainCdnImage = 'https://img.phimapi.com/';
                 final poster = viewModel.moviesList[index].posterUrl;
-                final thumb = viewModel.moviesList[index].thumbUrl;
                 final posterUrl = '$appDomainCdnImage/$poster';
-                final thumbUrl = '$appDomainCdnImage/$thumb';
 
-                // return FutureBuilder<bool>(
-                //   future: viewModel.checkImageUrl(posterUrl),
-                //   builder:
-                //       (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                //     if (snapshot.hasError) {
-                //       return buildImageDefault();
-                //     } else {
-                //       if (snapshot.hasData) {
-                //         if (snapshot.data!) {
-                //           return buildItemMovie(
-                //               viewModel, index, posterUrl, thumbUrl, true);
-                //         } else {
-                //           return buildItemMovie(
-                //               viewModel, index, posterUrl, thumbUrl, false);
-                //         }
-                //       } else {
-                //         return buildLoading();
-                //       }
-                //     }
-                //   },
-                // );
-                return buildItemMovie(
-                    viewModel, index, posterUrl, thumbUrl, true);
+                return _buildItemMovie(viewModel, index, posterUrl);
               },
             );
           } else {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset('assets/images/logo64px.png'),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 10.0),
-                    child: Text(
-                      'Không tìm thấy phim này\nBạn thử tìm phim khác nhé !',
-                      style: TextStyle(color: Colors.white),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ),
-            );
+            return _buildNoMoviesFound();
           }
         },
       ),
     );
   }
 
-  Widget buildItemMovie(FindMoviesViewModel viewModel, int indexImagePoster,
-      String posterUrl, String thumbUrl, bool boolPoster) {
+  Widget _buildItemMovie(
+      FindMoviesViewModel viewModel, int indexImagePoster, String posterUrl) {
     return Stack(
       children: [
         Column(
@@ -194,7 +151,7 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
                       );
                     },
                     child: CachedNetworkImage(
-                      imageUrl: boolPoster ? posterUrl : thumbUrl,
+                      imageUrl: posterUrl,
                       imageBuilder: (context, imageProvider) => Container(
                         decoration: BoxDecoration(
                           image: DecorationImage(
@@ -203,17 +160,15 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
                           ),
                         ),
                       ),
-                      //
                       errorWidget: (context, url, error) =>
-                          buildImageDefault(),
-                      //
-                      placeholder: (context, url) => buildLoading(),
+                          _buildImageDefault(),
+                      placeholder: (context, url) => _buildLoading(),
                     ),
                   ),
                 ),
               ),
             ),
-            buildTitleMovie(viewModel.moviesList[indexImagePoster]),
+            _buildTitleMovie(viewModel.moviesList[indexImagePoster]),
           ],
         ),
         Positioned(
@@ -238,7 +193,7 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
     );
   }
 
-  Widget buildTitleMovie(Items item) {
+  Widget _buildTitleMovie(Items item) {
     return Container(
       width: 110,
       height: 50,
@@ -256,7 +211,7 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
     );
   }
 
-  Widget buildLoading() {
+  Widget _buildLoading() {
     return const SizedBox(
       width: 30,
       height: 30,
@@ -268,20 +223,17 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
     );
   }
 
-  Widget buildImageDefault() {
-    // return Image.asset(
-    //   'assets/images/default_poster.jpg',
-    //   fit: BoxFit.cover,
-    // );
+  Widget _buildImageDefault() {
     return Container(
       color: Colors.black,
       child: const Center(
-        child: Icon(Icons.movie_creation_outlined, color: Colors.white, size: 40,),
+        child:
+            Icon(Icons.movie_creation_outlined, color: Colors.white, size: 40),
       ),
     );
   }
 
-  Widget buildFunctionSearch() {
+  Widget _buildFunctionSearch() {
     return Container(
       height: 40,
       margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
@@ -301,7 +253,7 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(
-              color: Colors.blue, // Màu viền khi được focus
+              color: Colors.red,
             ),
           ),
           filled: true,
@@ -309,6 +261,25 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
         ),
         style: const TextStyle(color: Colors.white),
         controller: _textEditingController,
+      ),
+    );
+  }
+
+  Widget _buildNoMoviesFound() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset('assets/images/logo64px.png'),
+          const Padding(
+            padding: EdgeInsets.only(top: 10.0),
+            child: Text(
+              'Không tìm thấy phim này\nBạn thử tìm phim khác nhé !',
+              style: TextStyle(color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
       ),
     );
   }

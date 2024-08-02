@@ -120,7 +120,7 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
                   borderRadius: BorderRadius.circular(10),
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => ChangeNotifierProvider(
