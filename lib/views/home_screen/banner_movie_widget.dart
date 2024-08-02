@@ -7,18 +7,14 @@ class BannerMovieWidget extends StatefulWidget {
   const BannerMovieWidget({super.key});
 
   @override
-  State<StatefulWidget> createState() {
-    return _BannerMovieWidgetState();
-  }
+  State<BannerMovieWidget> createState() => _BannerMovieWidgetState();
 }
 
 class _BannerMovieWidgetState extends State<BannerMovieWidget> {
-  static String slug = '';
-
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
+    Future.microtask(() {
       Provider.of<NewMovieViewModel>(context, listen: false).fetchMovies();
     });
   }
@@ -28,11 +24,9 @@ class _BannerMovieWidgetState extends State<BannerMovieWidget> {
     return Consumer<NewMovieViewModel>(
       builder: (context, viewModel, child) {
         if (viewModel.isLoading) {
-          return buildBannerDefault();
-        } else if (viewModel.newMovie == null ||
-            viewModel.newMovie!.items == null ||
-            viewModel.newMovie!.items!.isEmpty) {
-          return buildBannerDefault();
+          return const _BannerDefault();
+        } else if (viewModel.newMovie?.items?.isEmpty ?? true) {
+          return const _BannerDefault();
         } else {
           List<String> imageBannerUrls = viewModel.newMovie!.items!
               .map((item) => item.posterUrl ?? '')
@@ -49,22 +43,16 @@ class _BannerMovieWidgetState extends State<BannerMovieWidget> {
                   String imageUrl = imageBannerUrls[index];
                   int originalIndex = viewModel.newMovie!.items!
                       .indexWhere((item) => item.posterUrl == imageUrl);
-                  slug = returnSlugMovie(viewModel, originalIndex);
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Provider.of<SlugProvider>(context, listen: false)
-                        .setSlug(slug);
-                  });
+                  String slug = _returnSlugMovie(viewModel, originalIndex);
+                  _updateSlugProvider(context, slug);
+
                   return SizedBox(
                     width: MediaQuery.of(context).size.width,
-                    child: Stack(
-                      children: [
-                        Image.network(
-                          imageUrl,
-                          height: 550,
-                          width: double.infinity,
-                          fit: BoxFit.fill,
-                        ),
-                      ],
+                    child: Image.network(
+                      imageUrl,
+                      height: 550,
+                      width: double.infinity,
+                      fit: BoxFit.fill,
                     ),
                   );
                 },
@@ -75,35 +63,39 @@ class _BannerMovieWidgetState extends State<BannerMovieWidget> {
       },
     );
   }
+
+  void _updateSlugProvider(BuildContext context, String slug) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<SlugProvider>(context, listen: false).setSlug(slug);
+    });
+  }
+
+  String _returnSlugMovie(NewMovieViewModel viewModel, int index) {
+    if (index >= 0 && index < viewModel.newMovie!.items!.length) {
+      return viewModel.newMovie!.items![index].slug ?? '';
+    }
+    return '';
+  }
 }
 
-Widget buildBannerDefault() {
-  return SizedBox(
-    height: 500,
-    width: double.infinity,
-    // child: Image.asset(
-    //   'assets/images/default_poster.jpg',
-    //   fit: BoxFit.cover,
-    // ),
-    child: Container(
-      color: Colors.black,
-      child: const Center(
-        child: Icon(
-          Icons.movie_creation_outlined,
-          color: Colors.white,
-          size: 40,
+class _BannerDefault extends StatelessWidget {
+  const _BannerDefault();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      height: 550,
+      width: double.infinity,
+      child: DecoratedBox(
+        decoration: BoxDecoration(color: Colors.black),
+        child: Center(
+          child: Icon(
+            Icons.movie_creation_outlined,
+            color: Colors.white,
+            size: 100,
+          ),
         ),
       ),
-    ),
-  );
-}
-
-String returnSlugMovie(NewMovieViewModel viewModel, int index) {
-  if (viewModel.newMovie != null &&
-      viewModel.newMovie!.items != null &&
-      index >= 0 &&
-      index < viewModel.newMovie!.items!.length) {
-    return viewModel.newMovie!.items![index].slug ?? '';
+    );
   }
-  return '';
 }

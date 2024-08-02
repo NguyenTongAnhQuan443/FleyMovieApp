@@ -13,19 +13,10 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() {
-    return _HomeScreenState();
-  }
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String nameSource = 'KK Phim';
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       const BannerMovieWidget(),
                       const LogoWidget(),
-                      buildButtonWatchAMovie(),
+                      _buildButtonWatchAMovie(context),
                     ],
                   ),
                   Consumer<HomeScreenViewModel>(
@@ -72,7 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
                     },
                   ),
-                  //
                   const WatchHistoryWidget(),
                 ],
               ),
@@ -84,26 +74,24 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Show Alert
-  void showAlertDialog(BuildContext context) {
+  void _showAlertDialog(BuildContext context) {
     Widget cancelButton = TextButton(
       child: const Text("OK"),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
-    // Tạo AlertDialog
     AlertDialog alert = AlertDialog(
       backgroundColor: Colors.grey,
       title: const Text("Thông báo"),
       content: const SizedBox(
-          width: 200, height: 30, child: Text("Vui lòng đợi trong giây lát")),
-      actions: [
-        cancelButton,
-      ],
+        width: 200,
+        height: 30,
+        child: Text("Vui lòng đợi trong giây lát"),
+      ),
+      actions: [cancelButton],
     );
 
-    // Hiển thị AlertDialog
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -112,22 +100,23 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // button Watch A Movie
-  Widget buildButtonWatchAMovie() {
+  Widget _buildButtonWatchAMovie(BuildContext context) {
     return Positioned(
       bottom: 30,
       left: MediaQuery.of(context).size.width / 2 - 100,
       child: ElevatedButton(
         onPressed: () {
           String slug = Provider.of<SlugProvider>(context, listen: false).slug;
-          slug == ''
-              ? showAlertDialog(context)
-              : Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MovieDetailsScreen(slug),
-                  ),
-                );
+          if (slug.isEmpty) {
+            _showAlertDialog(context);
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MovieDetailsScreen(slug),
+              ),
+            );
+          }
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.red,

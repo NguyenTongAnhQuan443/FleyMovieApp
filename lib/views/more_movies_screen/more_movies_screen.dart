@@ -7,10 +7,10 @@ import '../../models/kkphim/movie.dart';
 import '../details_movie_screen/movie_details_screen.dart';
 
 class MoreMoviesScreen extends StatefulWidget {
-  String typeList;
-  int page;
+  final String typeList;
+  final int page;
 
-  MoreMoviesScreen(this.typeList, this.page, {super.key});
+  const MoreMoviesScreen(this.typeList, this.page, {super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -28,9 +28,7 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context
-          .read<MoreMoviesViewModel>()
-          .fetchMovies(widget.typeList, widget.page);
+      context.read<MoreMoviesViewModel>().fetchMovies(widget.typeList, widget.page);
     });
   }
 
@@ -41,8 +39,7 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent) {
       _loadMoreMovies();
     }
   }
@@ -50,9 +47,7 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
   void _loadMoreMovies() {
     if (!context.read<MoreMoviesViewModel>().isLoading) {
       _currentPage++;
-      context
-          .read<MoreMoviesViewModel>()
-          .fetchMovies(widget.typeList, _currentPage, isLoadMore: true);
+      context.read<MoreMoviesViewModel>().fetchMovies(widget.typeList, _currentPage, isLoadMore: true);
     }
   }
 
@@ -67,58 +62,52 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
         child: Column(
           children: [
             const BuildHeader(),
-            buildMoreMovie(crossAxisCount),
+            Expanded(child: _buildMoreMovie(crossAxisCount)),
           ],
         ),
       ),
     );
   }
 
-  // build more movie
-  Widget buildMoreMovie(int crossAxisCount) {
-    return Expanded(
-      child: Consumer<MoreMoviesViewModel>(
-        builder: (context, viewModel, child) {
-          if (viewModel.isLoading && viewModel.moviesList.isEmpty) {
-            return buildLoading();
-          } else if (viewModel.moviesList.isNotEmpty) {
-            return GridView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: crossAxisCount,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                childAspectRatio: 0.5,
-              ),
-              itemCount: viewModel.moviesList.length,
-              itemBuilder: (context, index) {
-                final appDomainCdnImage =
-                    viewModel.movie!.data!.appDomainCdnImage;
+  Widget _buildMoreMovie(int crossAxisCount) {
+    return Consumer<MoreMoviesViewModel>(
+      builder: (context, viewModel, child) {
+        if (viewModel.isLoading && viewModel.moviesList.isEmpty) {
+          return _buildLoading();
+        } else if (viewModel.moviesList.isNotEmpty) {
+          return GridView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 0.5,
+            ),
+            itemCount: viewModel.moviesList.length,
+            itemBuilder: (context, index) {
+              final appDomainCdnImage = viewModel.movie?.data?.appDomainCdnImage;
+              final poster = viewModel.moviesList[index].posterUrl;
+              final posterUrl = '$appDomainCdnImage/$poster';
 
-                final poster = viewModel.moviesList[index].posterUrl;
-                final thumb = viewModel.moviesList[index].thumbUrl;
-
-                final posterUrl = '${appDomainCdnImage!}/${poster!}';
-                final thumbUrl = '$appDomainCdnImage/${thumb!}';
-
-                return buildItemMovie(
-                    viewModel, index, posterUrl, thumbUrl, true);
-              },
-            );
-          } else {
-            return const Center(
-                child: Text('Không tìm thấy phim, vui lòng thử lại sau',
-                    style: TextStyle(color: Colors.white)));
-          }
-        },
-      ),
+              return _buildItemMovie(viewModel, index, posterUrl);
+            },
+          );
+        } else {
+          return const Center(
+            child: Text(
+              'Không tìm thấy phim, vui lòng thử lại sau',
+              style: TextStyle(color: Colors.white),
+            ),
+          );
+        }
+      },
     );
   }
 
-  // build Item Movie (true => poster, false => thumb)
-  Widget buildItemMovie(MoreMoviesViewModel viewModel, int indexImagePoster,
-      String posterUrl, String thumbUrl, bool boolPoster) {
+  Widget _buildItemMovie(MoreMoviesViewModel viewModel, int index, String posterUrl) {
+    final movie = viewModel.moviesList[index];
+
     return Stack(
       children: [
         Column(
@@ -136,15 +125,13 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
                         MaterialPageRoute(
                           builder: (context) => ChangeNotifierProvider(
                             create: (_) => MoreMoviesViewModel(),
-                            // Dispose current MoreMoviesViewModel
-                            child: MovieDetailsScreen(
-                                viewModel.moviesList[indexImagePoster].slug!),
+                            child: MovieDetailsScreen(movie.slug!),
                           ),
                         ),
                       );
                     },
                     child: CachedNetworkImage(
-                      imageUrl: boolPoster ? posterUrl : thumbUrl,
+                      imageUrl: posterUrl,
                       imageBuilder: (context, imageProvider) => Container(
                         decoration: BoxDecoration(
                           image: DecorationImage(
@@ -153,47 +140,49 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
                           ),
                         ),
                       ),
-                      //
-                      errorWidget: (context, url, error) => buildImageDefault(),
-                      //
-                      // placeholder: (context, url) => buildLoading(),
+                      errorWidget: (context, url, error) => _buildImageDefault(),
+                      placeholder: (context, url) => _buildLoading(),
                     ),
                   ),
                 ),
               ),
             ),
-            buildTitleMovie(viewModel.moviesList[indexImagePoster]),
+            _buildTitleMovie(movie),
           ],
         ),
-        Positioned(
-          top: 5,
-          right: 5,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.red,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            width: 95,
-            height: 18,
-            child: Center(
-                child: Text(
-              '${viewModel.moviesList[indexImagePoster].quality}-${viewModel.moviesList[indexImagePoster].lang}',
-              style: const TextStyle(color: Colors.white, fontSize: 12),
-            )),
-          ),
-        ),
+        _buildLabelQualityAndLang(movie),
       ],
     );
   }
 
-  // Build Title Movie
-  Widget buildTitleMovie(Items item) {
+  Widget _buildLabelQualityAndLang(Items movie) {
+    return Positioned(
+      top: 5,
+      right: 5,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        width: 95,
+        height: 18,
+        child: Center(
+          child: Text(
+            '${movie.quality}-${movie.lang}',
+            style: const TextStyle(color: Colors.white, fontSize: 12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTitleMovie(Items movie) {
     return Container(
       width: 110,
       height: 50,
       padding: const EdgeInsets.only(top: 5),
       child: Text(
-        item.name!,
+        movie.name!,
         maxLines: 2,
         textAlign: TextAlign.center,
         overflow: TextOverflow.ellipsis,
@@ -205,8 +194,7 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
     );
   }
 
-  // build widget loading
-  Widget buildLoading() {
+  Widget _buildLoading() {
     return const SizedBox(
       width: 30,
       height: 30,
@@ -218,8 +206,7 @@ class _MoreMoviesScreenState extends State<MoreMoviesScreen> {
     );
   }
 
-  // Widget Image Default
-  Widget buildImageDefault() {
+  Widget _buildImageDefault() {
     return Container(
       color: Colors.black,
       child: const Center(
