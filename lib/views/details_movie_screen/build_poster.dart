@@ -3,15 +3,16 @@ import 'package:fleymovieapp/models/kkphim/movie_details.dart';
 import 'package:flutter/material.dart';
 
 class BuildPoster extends StatelessWidget {
-  MovieDetails movieDetails;
+  final MovieDetails movieDetails;
 
-  BuildPoster(this.movieDetails, {super.key});
+  const BuildPoster(this.movieDetails, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      onTap: () {},
       child: CachedNetworkImage(
-        imageUrl: movieDetails.movie!.thumbUrl ??
+        imageUrl: movieDetails.movie?.thumbUrl ??
             'https://kenh14cdn.com/2020/8/1/mv5bzdcxogi0mdytntc5ns00nduzlwfkotitndixzji0otllntljxkeyxkfqcgdeqxvymtmxodk2otuv1-1592454662484458613488-15962494366901991849797.jpg',
         width: double.infinity,
         height: 300,
@@ -25,12 +26,14 @@ class BuildPoster extends StatelessWidget {
             ),
           ),
         ),
-        errorWidget: (context, error, child) => Image.asset(
-          'assets/images/default_poster.jpg',
-          fit: BoxFit.cover,
+        errorWidget: (context, url, error) => const Center(
+          child: Icon(
+            Icons.movie_creation_outlined,
+            color: Colors.white,
+            size: 100,
+          ),
         ),
       ),
-      onTap: () {},
     );
   }
 }

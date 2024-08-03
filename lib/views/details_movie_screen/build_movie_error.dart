@@ -8,8 +8,6 @@ class BuildMovieError extends StatelessWidget {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset(
             "assets/images/cinema.png",
@@ -23,7 +21,10 @@ class BuildMovieError extends StatelessWidget {
             'Phim này đang được cập nhập, bạn quay lại sau nhé <3',
             textAlign: TextAlign.center,
             style: TextStyle(
-                color: Colors.white, fontSize: 16, fontStyle: FontStyle.italic),
+              color: Colors.white,
+              fontSize: 16,
+              fontStyle: FontStyle.italic,
+            ),
           ),
         ],
       ),

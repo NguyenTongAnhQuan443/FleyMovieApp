@@ -5,29 +5,30 @@ import '../../models/kkphim/movie_details.dart';
 import '../play_video_screen/play_video_screen.dart';
 
 class BuildEpisode extends StatelessWidget {
-  MovieDetails movieDetails;
+  final MovieDetails movieDetails;
 
-  BuildEpisode(this.movieDetails, {super.key});
+  const BuildEpisode(this.movieDetails, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        buildQuantity(movieDetails),
-        buildEpisode(movieDetails),
+        _buildQuantity(),
+        _buildEpisode(context),
       ],
     );
   }
 
   // Widget quantity
-  Widget buildQuantity(MovieDetails movieDetails) {
+  Widget _buildQuantity() {
+    final quality = movieDetails.movie?.quality ?? '';
     return Container(
       margin: const EdgeInsets.only(left: 10, top: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
-            '${movieDetails.movie?.quality ?? ''} - Danh sách tập',
+            '$quality - Danh sách tập',
             style: const TextStyle(color: Colors.red, fontSize: 14),
           ),
         ],
@@ -35,23 +36,23 @@ class BuildEpisode extends StatelessWidget {
     );
   }
 
-  // build episode
-  Widget buildEpisode(MovieDetails movieDetails) {
+  // Build episode
+  Widget _buildEpisode(BuildContext context) {
+    final episodes = movieDetails.episodes?.first.serverData ?? [];
     return Container(
       margin: const EdgeInsets.all(20),
       child: GridView.builder(
         shrinkWrap: true,
-        // cho phép gridView điều chỉnh theo nội dung
         physics: const NeverScrollableScrollPhysics(),
-        // không cho phép gridView cuộn
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4, // Số lượng phần tử trên 1 hàng
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            childAspectRatio: 2.5),
-        // chiều rộng gắp 2.5 lần chiều cao
-        itemCount: movieDetails.episodes!.first.serverData!.length,
+          crossAxisCount: 4,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          childAspectRatio: 2.5,
+        ),
+        itemCount: episodes.length,
         itemBuilder: (context, index) {
+          final episode = episodes[index];
           return InkWell(
             child: Container(
               decoration: BoxDecoration(
@@ -60,23 +61,23 @@ class BuildEpisode extends StatelessWidget {
               ),
               child: Center(
                 child: Text(
-                  '${movieDetails.episodes!.first.serverData![index].name}',
+                  episode.name ?? '',
                   style: const TextStyle(color: Colors.white, fontSize: 12),
                 ),
               ),
             ),
             onTap: () {
-              String? url =
-                  movieDetails.episodes!.first.serverData![index].linkM3U8;
+              final url = episode.linkM3U8 ?? '';
+              final movie = movieDetails.movie!;
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => PlayVideoScreen(
-                    movieUrl: url!,
-                    slug: movieDetails.movie!.slug!,
+                    movieUrl: url,
+                    slug: movie.slug!,
                     episode: index,
-                    posterUrl: movieDetails.movie!.posterUrl!,
-                    name: movieDetails.movie!.name!,
+                    posterUrl: movie.posterUrl!,
+                    name: movie.name!,
                   ),
                 ),
               );

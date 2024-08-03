@@ -1,42 +1,38 @@
 import 'package:flutter/material.dart';
-
 import '../../models/kkphim/movie_details.dart';
 
 class BuildTitleMovie extends StatelessWidget {
-  MovieDetails movieDetails;
+  final MovieDetails movieDetails;
 
-  BuildTitleMovie(this.movieDetails, {super.key});
+  const BuildTitleMovie(this.movieDetails, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(left: 10, top: 10),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 1,
-                child: Text(
-                  softWrap: true,
-                  overflow: TextOverflow.visible,
-                  movieDetails.movie?.name ?? 'Phi Vụ Triệu Đô (Mùa 1)',
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22),
-                ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Text(
+              movieDetails.movie?.name ?? 'N/A',
+              softWrap: true,
+              overflow: TextOverflow.visible,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
               ),
-
-              Text(
-                movieDetails.movie?.originName ?? 'Phi Vụ Triệu Đô (Mùa 1)',
-                style: const TextStyle(
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16),
-              ),
-            ],
+            ),
+          ),
+          Text(
+            movieDetails.movie?.originName ?? 'N/A',
+            style: const TextStyle(
+              color: Colors.grey,
+              fontWeight: FontWeight.w400,
+              fontSize: 16,
+            ),
           ),
         ],
       ),

@@ -19,14 +19,7 @@ class BuildDetailsMovie extends StatelessWidget {
       );
     }
 
-    final actor1 =
-        movie.actor != null && movie.actor!.isNotEmpty ? movie.actor![0] : '';
-    final actor2 =
-        movie.actor != null && movie.actor!.length > 1 ? movie.actor![1] : '';
-    final actor3 =
-        movie.actor != null && movie.actor!.length > 2 ? movie.actor![2] : '';
-    final actor4 =
-        movie.actor != null && movie.actor!.length > 3 ? movie.actor![3] : '';
+    final actors = (movie.actor ?? []).take(4).join(' - ');
 
     return Container(
       margin: const EdgeInsets.only(left: 10),
@@ -72,7 +65,7 @@ class BuildDetailsMovie extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(top: 10),
             child: Text(
-              'Diễn viên: $actor1 - $actor2 - $actor3 - $actor4',
+              'Diễn viên: $actors',
               style: const TextStyle(
                 color: Colors.grey,
                 fontWeight: FontWeight.w400,

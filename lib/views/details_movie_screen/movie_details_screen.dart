@@ -16,21 +16,23 @@ class MovieDetailsScreen extends StatefulWidget {
   const MovieDetailsScreen(this.slug, {super.key});
 
   @override
-  State<StatefulWidget> createState() {
-    return _DetailsMovieScreenState(slug);
-  }
+  State<MovieDetailsScreen> createState() => _MovieDetailsScreenState();
 }
 
-class _DetailsMovieScreenState extends State<MovieDetailsScreen> {
-  String slug;
+class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
+  late final MovieDetailsScreenViewModel viewModel;
 
-  _DetailsMovieScreenState(this.slug);
+  @override
+  void initState() {
+    super.initState();
+    viewModel = MovieDetailsScreenViewModel();
+    viewModel.fetchMovieDetails(widget.slug);
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    return ChangeNotifierProvider(
-      create: (_) => MovieDetailsScreenViewModel()..fetchMovieDetails(slug),
+    return ChangeNotifierProvider<MovieDetailsScreenViewModel>.value(
+      value: viewModel,
       child: Scaffold(
         backgroundColor: Colors.black,
         body: SafeArea(
@@ -38,9 +40,10 @@ class _DetailsMovieScreenState extends State<MovieDetailsScreen> {
             builder: (context, viewModel, child) {
               if (viewModel.isLoading) {
                 return const Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.white,
-                ));
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
+                );
               } else if (viewModel.movieDetails != null &&
                   viewModel.movieDetails!.status != false) {
                 return Stack(
@@ -49,7 +52,6 @@ class _DetailsMovieScreenState extends State<MovieDetailsScreen> {
                       scrollDirection: Axis.vertical,
                       child: Column(
                         children: [
-                          // Đè tên phim - thể loại lên poster
                           Stack(
                             children: [
                               BuildPoster(viewModel.movieDetails!),
@@ -65,45 +67,51 @@ class _DetailsMovieScreenState extends State<MovieDetailsScreen> {
                               ),
                             ],
                           ),
-
                           const BuildWatchAMovie(),
-
                           BuildEpisodeCurrentMovie(viewModel.movieDetails!),
-
                           BuildEpisode(viewModel.movieDetails!),
-
                           BuildDetailsMovie(viewModel.movieDetails!),
                         ],
                       ),
                     ),
-                    onTapArrowBack(),
+                    Positioned(
+                      top: 10,
+                      left: 10,
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        icon: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ],
                 );
               } else {
                 return Stack(
                   children: [
-                   const BuildMovieError(),
-                    onTapArrowBack(),
+                    const BuildMovieError(),
+                    Positioned(
+                      top: 10,
+                      left: 10,
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        icon: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ],
-
                 );
               }
             },
           ),
         ),
-      ),
-    );
-  }
-
-  // OnTap Button Arrow
-  Widget onTapArrowBack() {
-    return IconButton(
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
-      icon: const Icon(
-        Icons.arrow_back,
-        color: Colors.white,
       ),
     );
   }
