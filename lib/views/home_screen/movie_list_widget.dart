@@ -32,13 +32,20 @@ class MovieListWidget extends StatelessWidget {
                               item, posterUrl, context),
                           onTap: () {
                             String? slugMovie = item.slug;
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => ChangeNotifierProvider(
+                            //       create: (_) => HomeScreenViewModel(),
+                            //       child: MovieDetailsScreen(slugMovie!),
+                            //     ),
+                            //   ),
+                            // );
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ChangeNotifierProvider(
-                                  create: (_) => HomeScreenViewModel(),
-                                  child: MovieDetailsScreen(slugMovie!),
-                                ),
+                                builder: (context) =>
+                                    MovieDetailsScreen(slugMovie!),
                               ),
                             );
                           },

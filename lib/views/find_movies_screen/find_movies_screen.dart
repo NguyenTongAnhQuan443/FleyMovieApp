@@ -74,10 +74,12 @@ class _FindMoviesScreenState extends State<FindMoviesScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     var orientation = MediaQuery.of(context).orientation;
     int crossAxisCount = orientation == Orientation.portrait ? 3 : 5;
+
 
     return Scaffold(
       backgroundColor: Colors.black,
